@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import FileExtensionValidator
 from django.contrib.auth.models import User
 from django.utils.html import format_html
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 from common.models import BaseModel
 
@@ -23,11 +24,12 @@ class Stadion(BaseModel):
     end_time = models.TimeField(null=True, blank=True, help_text="Stadion tugash vaqti")
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
-    kiyinish_xonasi = models.BooleanField()
-    dush = models.BooleanField()
-    yoritish = models.BooleanField()
-    parkofka = models.BooleanField()
-    forma = models.BooleanField()
+
+    kiyinish_xonasi = models.BooleanField(default=False)
+    dush = models.BooleanField(default=False)
+    yoritish = models.BooleanField(default=False)
+    parkofka = models.BooleanField(default=False)
+    forma = models.BooleanField(default=False)
 
     def __str__(self):
         return str(self.title)
@@ -60,3 +62,20 @@ class Images(models.Model):
         verbose_name = "image"
         verbose_name_plural = "images"
         db_table = "image"
+
+
+class StadionReview(models.Model):
+    stadion = models.ForeignKey("Stadion", on_delete=models.CASCADE, related_name="stadionreviews")
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    comment = models.TextField()
+    rank = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(5)])
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user} writed for {self.stadion}"
+
+    class Meta:
+        verbose_name = "Stadion sharhi"
+        verbose_name_plural = "Stadion sharhlari"
+        db_table = "stadion_review"

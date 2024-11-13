@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from stadion.models import Stadion, Images
+from stadion.models import Stadion, Images, StadionReview
 
 
 class ImagesInline(admin.TabularInline):
@@ -20,3 +20,9 @@ class StadionAdmin(admin.ModelAdmin):
 class ImagesAdmin(admin.ModelAdmin):
     list_display = ['id', 'stadion', 'image', 'image_tag']
     readonly_fields = ('image_tag',)
+
+
+@admin.register(StadionReview)
+class StadionReviewAdmin(admin.ModelAdmin):
+    list_display = ['id', 'stadion', 'user', 'rank', 'created_at']
+    list_filter = ['stadion', 'user', 'rank']
