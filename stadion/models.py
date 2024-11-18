@@ -7,23 +7,25 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from common.models import BaseModel
 
 
-class Stadion(BaseModel):
+class Stadion(models.Model):
     title = models.CharField(max_length=200, verbose_name="Stadion nomi")
     description = models.TextField(verbose_name="Stadion haqida")
-    price = models.FloatField(verbose_name="Stadion narxi")
+    price = models.PositiveBigIntegerField(verbose_name="Stadion narxi")
     photo = models.ImageField(upload_to="stadion/", null=True, blank=True,
                         validators=[
                                 FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])
                               ],
+                        default="stadion/default.jpg",
                         verbose_name="Asosiy rasm",
                         help_text="Bu saytda asosiy rasm sifatida turadi")
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="stadions")
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, related_name="stadions")
 
     start_time = models.TimeField(null=True, blank=True, help_text="Stadion boshlanish vaqti")
     end_time = models.TimeField(null=True, blank=True, help_text="Stadion tugash vaqti")
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     kiyinish_xonasi = models.BooleanField(default=False)
     dush = models.BooleanField(default=False)
@@ -65,7 +67,7 @@ class Images(models.Model):
 
 
 class StadionReview(models.Model):
-    stadion = models.ForeignKey("Stadion", on_delete=models.CASCADE, related_name="stadionreviews")
+    stadion = models.ForeignKey("Stadion", on_delete=models.SET_NULL, blank=True, null=True, related_name="stadionreviews")
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     comment = models.TextField()
