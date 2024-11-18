@@ -1,10 +1,9 @@
 from django.db import models
 from django.core.validators import FileExtensionValidator
-from django.contrib.auth.models import User
 from django.utils.html import format_html
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-from common.models import BaseModel
+from users.models import User
 
 
 class Stadion(models.Model):

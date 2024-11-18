@@ -29,10 +29,10 @@ LOCAL_APPS  = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'users',
     'order',
     'common',
     'stadion',
+    'users',
 ]
 
 THIRD_PARTY_APPS = [
@@ -153,3 +153,5 @@ SPECTACULAR_SETTINGS = {
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
 }
+
+AUTH_USER_MODEL = 'users.User'
