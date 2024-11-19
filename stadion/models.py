@@ -20,6 +20,7 @@ class Stadion(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, related_name="stadions")
 
+    address = models.CharField(max_length=300, null=True, blank=True)
     start_time = models.TimeField(null=True, blank=True, help_text="Stadion boshlanish vaqti")
     end_time = models.TimeField(null=True, blank=True, help_text="Stadion tugash vaqti")
     latitude = models.FloatField(null=True, blank=True)

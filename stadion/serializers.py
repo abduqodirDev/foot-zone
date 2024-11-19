@@ -21,7 +21,7 @@ class StadionSerializer(serializers.ModelSerializer, StadionReviewMixin):
     rank_ratio = serializers.SerializerMethodField("get_rank_ratio")
     class Meta:
         model = Stadion
-        fields = ['id', 'title', 'price', 'latitude', 'longitude', 'photo', 'comment_count', 'rank_ratio']
+        fields = ['id', 'title', 'price', 'photo', 'comment_count', 'rank_ratio']
 
     def get_comment_count(self, obj):
         return self.comment_count_def(obj)

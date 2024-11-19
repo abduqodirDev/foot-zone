@@ -159,7 +159,7 @@ SPECTACULAR_SETTINGS = {
 AUTH_USER_MODEL = 'users.User'
 
 CORS_ALLOWED_ORIGINS = [
-    "https://stadions.vercel.app/",
+    "https://stadions.vercel.app",
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
