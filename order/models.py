@@ -4,6 +4,7 @@ from stadion.models import Stadion
 from users.models import User
 
 
+TASDIQLANGAN, TASDIQLANMAGAN = ('TASDIQLANGAN', 'TASDIQLANMAGAN')
 class BronStadion(models.Model):
     TIMECHOICE = (
         ("0", "00.00-01.00"),
@@ -32,12 +33,19 @@ class BronStadion(models.Model):
         ("23", "23.00-00.00"),
     )
 
+    STATUSCHOICE = (
+        ("TASDIQLANGAN", "TASDIQLANGAN"),
+        ("TASDIQLANMAGAN", "TASDIQLANMAGAN")
+    )
+
     stadion = models.ForeignKey(Stadion, on_delete=models.SET_NULL, null=True, blank=True, related_name="stadion_bronorders")
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="user_bronorders")
 
     time = models.CharField(max_length=20, choices=TIMECHOICE)
     date = models.DateField()
+    status = models.CharField(max_length=20, choices=STATUSCHOICE, default=TASDIQLANMAGAN)
     is_active = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.user} for {self.stadion}"
