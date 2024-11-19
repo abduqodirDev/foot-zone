@@ -159,5 +159,5 @@ SPECTACULAR_SETTINGS = {
 AUTH_USER_MODEL = 'users.User'
 
 CORS_ALLOWED_ORIGINS = [
-    "http://footzone.pythonanywhere.com",
+    "https://stadions.vercel.app/",
 ]
