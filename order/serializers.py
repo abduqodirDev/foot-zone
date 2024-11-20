@@ -1,3 +1,5 @@
+from datetime import date
+
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
@@ -12,15 +14,25 @@ class BronStadionSerializer(serializers.ModelSerializer):
 
 class BronStadionPostSerializer(serializers.Serializer):
     brons = serializers.ListField(
-        child=serializers.IntegerField(),
+        child=serializers.DictField(),
         allow_empty=False,
         required=True
     )
 
-    def validate_brons(self, data):
-        lists = list(range(24))
-        for i in data:
-            if i is not lists:
-                raise ValidationError("error")
-        print("data:", data)
-        return data
+    def validate_brons(self, brons):
+        data = {
+            "status": False,
+            "message": "Invalid_data"
+        }
+        if len(brons) > 10:
+            raise ValidationError(data)
+
+        lists = [str(a) for a in range(24)]
+        for dict in brons:
+            if "bron" not in dict or "date" not in dict or len(dict) != 2:
+                raise ValidationError(data)
+
+            if dict["bron"] not in lists:
+                raise ValidationError(data)
+
+        return brons

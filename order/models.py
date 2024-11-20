@@ -2,6 +2,7 @@ from django.db import models
 
 from stadion.models import Stadion
 from users.models import User
+from order.managers import ActiveBronStadionManager
 
 
 TASDIQLANGAN, TASDIQLANMAGAN = ('TASDIQLANGAN', 'TASDIQLANMAGAN')
@@ -46,6 +47,9 @@ class BronStadion(models.Model):
     status = models.CharField(max_length=20, choices=STATUSCHOICE, default=TASDIQLANMAGAN)
     is_active = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    objects = models.Manager()
+    ActiveBronStadion = ActiveBronStadionManager()
 
     def __str__(self):
         return f"{self.user} for {self.stadion}"

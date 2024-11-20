@@ -12,7 +12,7 @@ from stadion.models import Stadion
 
 class BronStadionAPIView(APIView):
     queryset = BronStadion.objects.all()
-    # serializer_class = BronStadionPostSerializer
+    serializer_class = BronStadionPostSerializer
     http_method_names = ['get', 'post']
 
     def get(self, request, id, *args, **kwargs):
@@ -50,12 +50,51 @@ class BronStadionAPIView(APIView):
             }
             return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, id, *args, **kwargs):
         data = request.data
         serializer = BronStadionPostSerializer(data=data)
-        serializer.is_valid(raise_exception=True)
+        try:
+            if not serializer.is_valid():
+                context = {
+                    'status': False,
+                    'message': 'Invalid_data'
+                }
+                return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(serializer.data)
+            for dict in data['brons']:
+                if BronStadion.ActiveBronStadion.filter(date=dict['date'], time=str(dict['bron'])).exists():
+                    content = {
+                        "status": False,
+                        "message": "Bu vaqtda stadion bron qilingan!!!"
+                    }
+                    return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
+            stadion = Stadion.objects.get(id=id)
+            bron_id = []
+            for dict in data['brons']:
+                time = dict['bron']
+                date = dict['date']
+                bron = BronStadion.objects.create(stadion=stadion, time=time, date=date)
+                bron_id.append(bron.id)
 
+            context = {
+                "status": True,
+                "message": "Bron stadions was saved successfully",
+                "bron_id": bron_id
+            }
 
+            return Response(context)
+
+        except Stadion.DoesNotExist:
+            context = {
+                'status': False,
+                'message': 'Stadion topilmadi!!!'
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            context = {
+                "status": False,
+                "message": str(e)
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
