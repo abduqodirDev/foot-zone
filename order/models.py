@@ -5,7 +5,7 @@ from users.models import User
 from order.managers import ActiveBronStadionManager
 
 
-TASDIQLANGAN, TASDIQLANMAGAN = ('TASDIQLANGAN', 'TASDIQLANMAGAN')
+TASDIQLANGAN, TASDIQLANMAGAN = ('T', 'F')
 class BronStadion(models.Model):
     TIMECHOICE = (
         ("0", "00.00-01.00"),
@@ -35,8 +35,8 @@ class BronStadion(models.Model):
     )
 
     STATUSCHOICE = (
-        ("TASDIQLANGAN", "TASDIQLANGAN"),
-        ("TASDIQLANMAGAN", "TASDIQLANMAGAN")
+        ("T", "TASDIQLANGAN"),
+        ("F", "TASDIQLANMAGAN")
     )
 
     stadion = models.ForeignKey(Stadion, on_delete=models.SET_NULL, null=True, blank=True, related_name="stadion_bronorders")

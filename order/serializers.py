@@ -9,7 +9,7 @@ from order.models import BronStadion
 class BronStadionSerializer(serializers.ModelSerializer):
     class Meta:
         model = BronStadion
-        fields = ('time', 'date')
+        fields = ('id', 'time', 'date')
 
 
 class BronStadionPostSerializer(serializers.Serializer):
