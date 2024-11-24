@@ -1,13 +1,16 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, date
 
 from django.shortcuts import render
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import RefreshToken
 
+from order.models import BronStadion
+from stadion.models import Stadion
 from users.models import User, VerificationOtp
-from users.serializers import LoginSerializer
+from users.serializers import LoginSerializer, VerifyOtpSerializer
 from users.validators import create_otp_code
 
 
@@ -98,4 +101,110 @@ class LoginAPIView(APIView):
                 'message': str(e)
             }
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+
+class VerifyOtpAPIView(APIView):
+    serializer_class = VerifyOtpSerializer
+    http_method_names = ['post']
+
+    def post(self, request, *args, **kwars):
+        context = {
+            'status': False,
+            'message': 'Invalid_data'
+        }
+        serializer = VerifyOtpSerializer(data=request.data)
+        if not serializer.is_valid(raise_exception=True):
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+        data = serializer.validated_data
+        user_new = data['user_new']
+        user_id = data['user_id']
+        stadion_id = data.get('stadion_id', None)
+        code = data['code']
+        brons = data.get('brons', None)
+        try:
+            user = User.objects.get(id=user_id)
+            verifies = user.verificationotps.filter(expires_time__gte=datetime.now(), is_confirmed=False)
+            if not verifies:
+                context = {
+                    'status': False,
+                    'message': 'Tasdiqlash vaqtingiz tugadi'
+                }
+                return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+            verify = verifies.last()
+            if verify.code != code:
+                context = {
+                    'status': False,
+                    'message': 'Code xato!!!'
+                }
+                return Response(context, status=status.HTTP_400_BAD_REQUEST)
+            verify.is_confirmed = True
+            verify.save()
+
+            if user_new:
+                context = {
+                    'status': True,
+                    'message': 'code saved successfully',
+                    'user_id': user_id
+                }
+                return Response(context)
+
+            else:
+                stadion = Stadion.obejcts.get(id=stadion_id)
+                for bron, date in brons.items:
+                    if BronStadion.ActiveBronStadion.filter(stadion=stadion, date=date, time=bron).exists():
+                        context = {
+                            'status': False,
+                            'message': 'Stadion bu vaqtda bron qilingan'
+                        }
+                        return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+                for bron, date in brons.items:
+                    bron = BronStadion.objects.get(stadion=stadion, date=date, time=bron)
+                    bron.is_active = True
+                    bron.status = "T"
+                    bron.save()
+
+                refresh = RefreshToken.for_user(user)
+                context = {
+                    'status': True,
+                    'message1': 'code saved successfully',
+                    'message2': 'barcha bronlar tasdiqlandi',
+                    'access': str(refresh.access_token),
+                    'refresh': str(refresh)
+                }
+
+                return Response(context, status=status.HTTP_200_OK)
+
+            return Response(serializer.data)
+
+        except User.DoesNotExist:
+            context = {
+                'status': False,
+                'message': 'User topilmadi'
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+        except Stadion.DoesNotExist:
+            context = {
+                'status': False,
+                'message': 'Stadion topilmadi'
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+        except BronStadion.DoesNotExist:
+            context = {
+                'status': False,
+                'message': 'Error!!!'
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            context = {
+                'status': False,
+                'message': str(e)
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
 

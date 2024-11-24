@@ -39,6 +39,8 @@ THIRD_PARTY_APPS = [
     'rest_framework',
     'drf_spectacular',
     'corsheaders',
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
 ]
 
 INSTALLED_APPS = LOCAL_APPS + THIRD_PARTY_APPS

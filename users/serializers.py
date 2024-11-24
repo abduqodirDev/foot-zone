@@ -24,3 +24,51 @@ class LoginSerializer(serializers.Serializer):
             raise ValidationError(context)
 
         return data
+
+
+class VerifyOtpSerializer(serializers.Serializer):
+    user_new = serializers.BooleanField(required=True)
+    user_id = serializers.IntegerField(required=True)
+    stadion_id = serializers.IntegerField(required=False)
+    code = serializers.CharField(required=True)
+    brons = serializers.ListField(
+        child=serializers.DictField(),
+        allow_empty=False,
+        required=False
+    )
+
+    def validate(self, data):
+        user_id = data['user_id']
+        stadion_id = data.get('stadion_id', None)
+        user_new = data['user_new']
+        code = data['code']
+        brons = data.get('brons', None)
+        context = {
+            'status': False,
+            'message': 'Invalid_data'
+        }
+        if user_id < 0 or stadion_id < 0:
+            raise ValidationError(context)
+
+        if len(code) != 4 or not str(code).isdigit():
+            raise ValidationError(context)
+
+        if user_new and "brons" in data and "stadion_id" in data:
+            raise ValidationError(context)
+
+        if user_new:
+            if len(brons) > 10:
+                raise ValidationError(data)
+
+            lists = [str(a) for a in range(24)]
+            for dict in brons:
+                if "bron" not in dict or "date" not in dict or len(dict) != 2:
+                    raise ValidationError(data)
+
+                if dict["bron"] not in lists:
+                    raise ValidationError(data)
+
+
+        return data
+
+
