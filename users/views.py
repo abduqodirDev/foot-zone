@@ -151,20 +151,12 @@ class VerifyOtpAPIView(APIView):
                 return Response(context)
 
             else:
-                stadion = Stadion.obejcts.get(id=stadion_id)
-                for bron, date in brons.items:
-                    if BronStadion.ActiveBronStadion.filter(stadion=stadion, date=date, time=bron).exists():
-                        context = {
-                            'status': False,
-                            'message': 'Stadion bu vaqtda bron qilingan'
-                        }
-                        return Response(context, status=status.HTTP_400_BAD_REQUEST)
-
-                for bron, date in brons.items:
-                    bron = BronStadion.objects.get(stadion=stadion, date=date, time=bron)
-                    bron.is_active = True
-                    bron.status = "T"
-                    bron.save()
+                stadion = Stadion.objects.get(id=stadion_id)
+                for bron in brons:
+                    bronstadion = BronStadion.objects.get(id=bron)
+                    bronstadion.status = 'T'
+                    bronstadion.is_active = True
+                    bronstadion.save()
 
                 refresh = RefreshToken.for_user(user)
                 context = {

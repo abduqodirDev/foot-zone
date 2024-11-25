@@ -32,7 +32,7 @@ class VerifyOtpSerializer(serializers.Serializer):
     stadion_id = serializers.IntegerField(required=False)
     code = serializers.CharField(required=True)
     brons = serializers.ListField(
-        child=serializers.DictField(),
+        child=serializers.IntegerField(min_value=0),
         allow_empty=False,
         required=False
     )
@@ -55,19 +55,6 @@ class VerifyOtpSerializer(serializers.Serializer):
 
         if user_new and "brons" in data and "stadion_id" in data:
             raise ValidationError(context)
-
-        if user_new:
-            if len(brons) > 10:
-                raise ValidationError(data)
-
-            lists = [str(a) for a in range(24)]
-            for dict in brons:
-                if "bron" not in dict or "date" not in dict or len(dict) != 2:
-                    raise ValidationError(data)
-
-                if dict["bron"] not in lists:
-                    raise ValidationError(data)
-
 
         return data
 
