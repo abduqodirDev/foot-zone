@@ -10,7 +10,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from order.models import BronStadion
 from stadion.models import Stadion
 from users.models import User, VerificationOtp
-from users.serializers import LoginSerializer, VerifyOtpSerializer
+from users.serializers import LoginSerializer, VerifyOtpSerializer, PostUserInfoSerializer
 from users.validators import create_otp_code
 
 
@@ -151,9 +151,8 @@ class VerifyOtpAPIView(APIView):
                 return Response(context)
 
             else:
-                stadion = Stadion.objects.get(id=stadion_id)
                 for bron in brons:
-                    bronstadion = BronStadion.objects.get(id=bron)
+                    bronstadion = BronStadion.objects.get(id=bron, is_active=False, status='F')
                     bronstadion.status = 'T'
                     bronstadion.is_active = True
                     bronstadion.save()
@@ -198,5 +197,60 @@ class VerifyOtpAPIView(APIView):
                 'message': str(e)
             }
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PostUserInfoAPIView(APIView):
+    serializer_class = PostUserInfoSerializer
+    http_method_names = ['post']
+
+    def post(self, request, *args, **kwargs):
+        context = {
+            'status': False,
+            'message': 'Invalid_data'
+        }
+        serializer = PostUserInfoSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+        data = serializer.validated_data
+
+        first_name = data.get('name', None)
+        last_name = data.get('surname', None)
+        user_id = data.get('user_id', None)
+        brons = data.get('brons', None)
+        try:
+            user = User.objects.get(id=user_id)
+            for bron in brons:
+                bronstadion = BronStadion.objects.get(id=bron, is_active=False, status='F')
+                bronstadion.status = 'T'
+                bronstadion.is_active = True
+                bronstadion.save()
+            user.first_name = first_name
+            user.last_name = last_name
+            user.save()
+
+            refresh = RefreshToken.for_user(user)
+            context = {
+                'status': True,
+                'message': 'barcha bronlar tasdiqlandi',
+                'access': str(refresh.access_token),
+                'refresh': str(refresh)
+            }
+
+            return Response(context, status=status.HTTP_200_OK)
+
+        except User.DoesNotExist:
+            context = {
+                'status': False,
+                'message': 'User not found'
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            context = {
+                'status': False,
+                'message': str(e)
+            }
+            return Response(context)
 
 

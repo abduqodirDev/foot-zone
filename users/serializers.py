@@ -29,7 +29,6 @@ class LoginSerializer(serializers.Serializer):
 class VerifyOtpSerializer(serializers.Serializer):
     user_new = serializers.BooleanField(required=True)
     user_id = serializers.IntegerField(required=True)
-    stadion_id = serializers.IntegerField(required=False)
     code = serializers.CharField(required=True)
     brons = serializers.ListField(
         child=serializers.IntegerField(min_value=0),
@@ -39,7 +38,6 @@ class VerifyOtpSerializer(serializers.Serializer):
 
     def validate(self, data):
         user_id = data['user_id']
-        stadion_id = data.get('stadion_id', None)
         user_new = data['user_new']
         code = data['code']
         brons = data.get('brons', None)
@@ -47,15 +45,25 @@ class VerifyOtpSerializer(serializers.Serializer):
             'status': False,
             'message': 'Invalid_data'
         }
-        if user_id < 0 or stadion_id < 0:
+        if user_id < 0:
             raise ValidationError(context)
 
         if len(code) != 4 or not str(code).isdigit():
             raise ValidationError(context)
 
-        if user_new and "brons" in data and "stadion_id" in data:
+        if user_new and "brons" in data:
             raise ValidationError(context)
 
         return data
 
+
+class PostUserInfoSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=30, required=True)
+    surname = serializers.CharField(max_length=30, required=True)
+    user_id = serializers.IntegerField(required=True)
+    brons = serializers.ListField(
+        child=serializers.IntegerField(min_value=0),
+        allow_empty=False,
+        required=False
+    )
 
