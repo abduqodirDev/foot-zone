@@ -4,6 +4,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from order.models import BronStadion
+from stadion.serializers import StadionSerializer
 
 
 class BronStadionSerializer(serializers.ModelSerializer):
@@ -36,3 +37,21 @@ class BronStadionPostSerializer(serializers.Serializer):
                 raise ValidationError(data)
 
         return brons
+
+
+class MyBronstadionSerializer(serializers.ModelSerializer):
+    stadion = StadionSerializer()
+    class Meta:
+        model = BronStadion
+        fields = ('id', 'stadion', 'time', 'date', 'status', 'is_active')
+
+    def to_representation(self, instance):
+        data = super(MyBronstadionSerializer, self).to_representation(instance)
+        if data['status'] == 'T' and data['is_active'] == True:
+            data['bron-status'] = 'Tasdiqlangan'
+        elif data['status'] == 'F' and data['is_active'] == False:
+            data['bron-status'] = 'Kutish'
+        else:
+            data['bron-status'] = 'Bekor qilingan'
+
+        return data
