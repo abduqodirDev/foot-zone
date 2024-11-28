@@ -3,6 +3,8 @@ from datetime import datetime, date
 
 from django.shortcuts import render
 from rest_framework import status
+from rest_framework.generics import RetrieveUpdateAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -10,7 +12,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from order.models import BronStadion
 from stadion.models import Stadion
 from users.models import User, VerificationOtp
-from users.serializers import LoginSerializer, VerifyOtpSerializer, PostUserInfoSerializer
+from users.serializers import LoginSerializer, VerifyOtpSerializer, PostUserInfoSerializer, UserInfoSerializer
 from users.validators import create_otp_code
 
 
@@ -254,3 +256,9 @@ class PostUserInfoAPIView(APIView):
             return Response(context)
 
 
+class UserInfoAPIView(RetrieveUpdateAPIView):
+    serializer_class = UserInfoSerializer
+    permission_classes = [IsAuthenticated,]
+
+    def get_object(self):
+        return self.request.user

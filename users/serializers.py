@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
+from users.models import User
+
 
 class LoginSerializer(serializers.Serializer):
     phone_number = serializers.CharField(max_length=20, required=True)
@@ -67,3 +69,8 @@ class PostUserInfoSerializer(serializers.Serializer):
         required=False
     )
 
+
+class UserInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'last_name', 'first_name', 'middle_name', 'date_of_birth', 'sex', 'email', 'phone_number')

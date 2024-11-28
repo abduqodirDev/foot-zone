@@ -16,6 +16,11 @@ class User(AbstractUser):
         ("S", "SUPERUSER"),
     )
 
+    SEX = (
+        ('E', 'ERKAK'),
+        ('A', 'AYOL')
+    )
+
     phone_number = models.CharField(max_length=20, null=True, blank=True, validators=[check_phone_validator,])
     photo = models.ImageField(upload_to="user/", null=True, blank=True,
                               validators=[
@@ -24,6 +29,9 @@ class User(AbstractUser):
                               default="user/default.jpg",
                               verbose_name="Foydalanuvchi rasmi")
     role = models.CharField(max_length=20, choices=USERROLE, default='C')
+    middle_name = models.CharField(max_length=30, null=True, blank=True, verbose_name="Otasining ismi")
+    date_of_birth = models.DateField(null=True, blank=True)
+    sex = models.CharField(max_length=2, choices=SEX, null=True, blank=True)
 
     objects = CustomManager()
 
