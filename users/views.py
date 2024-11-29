@@ -12,7 +12,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from order.models import BronStadion
 from stadion.models import Stadion
 from users.models import User, VerificationOtp
-from users.serializers import LoginSerializer, VerifyOtpSerializer, PostUserInfoSerializer, UserInfoSerializer
+from users.serializers import LoginSerializer, VerifyOtpSerializer, PostUserInfoSerializer, UserInfoSerializer, \
+    UserLoginSerializer, UserRegisterSerializer
 from users.validators import create_otp_code
 
 
@@ -262,3 +263,102 @@ class UserInfoAPIView(RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+class UserLoginAPIView(APIView):
+    serializer_class = UserLoginSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = UserLoginSerializer(data=request.data)
+        if not serializer.is_valid():
+            context = {
+                'status': False,
+                'message': 'Invalid_data'
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            data = serializer.validated_data
+            phone_number = data.get('phone_number', None)
+            password = data.get('password', None)
+            user = User.objects.get(phone_number=phone_number)
+            if user.check_password(password):
+                refresh = RefreshToken.for_user(user)
+                context = {
+                    'status': True,
+                    'access': str(refresh.access_token),
+                    'refresh': str(refresh),
+                    'user_id': user.id
+                }
+                return Response(context)
+            context = {
+                'status': False,
+                'message': 'Parol xato!!!'
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+        except User.DoesNotExist:
+            context = {
+                'status': False,
+                'message': 'User mavjud emas'
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            context = {
+                'status': False,
+                'message': str(e)
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserRegisterAPIView(APIView):
+    serializer_class = UserRegisterSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = UserRegisterSerializer(data=request.data)
+        if not serializer.is_valid():
+            context = {
+                'status': False,
+                'message': "Invalid_data"
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            data = serializer.validated_data
+            first_name = data.get('first_name', None)
+            last_name = data.get('last_name', None)
+            phone_number = data.get('phone_number', None)
+            password = data.get('password', None)
+
+            if User.objects.filter(phone_number=phone_number).exists():
+                context = {
+                    'status': False,
+                    'message': 'Bu raqam avval ruyxatdan utgan'
+                }
+                return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+            user = User.objects.create(first_name=first_name, last_name=last_name, phone_number=phone_number)
+            user.set_password(password)
+            user.save()
+            refresh = RefreshToken.for_user(user)
+            context = {
+                'status': True,
+                'access': str(refresh.access_token),
+                'refresh': str(refresh),
+                'user_id': user.id
+            }
+            return Response(context)
+
+        # except User.DoesNotExist:
+        #     context = {
+        #         'status': False,
+        #         'message': 'Bu raqam avval ruyxatdan utgan'
+        #     }
+        #     return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            context = {
+                'status': False,
+                'message': str(e)
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
