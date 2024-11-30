@@ -337,7 +337,17 @@ class UserRegisterAPIView(APIView):
                 }
                 return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
-            user = User.objects.create(first_name=first_name, last_name=last_name, phone_number=phone_number)
+            random = str(uuid.uuid4()).split('-')[-1]
+
+            username = f"footzone-username-{random}"
+            while True:
+                if User.objects.filter(username=username).exists():
+                    random = str(uuid.uuid4()).split('-')[-1]
+                    username = f"footzone-username-{random}"
+                else:
+                    break
+
+            user = User.objects.create(username=username, first_name=first_name, last_name=last_name, phone_number=phone_number)
             user.set_password(password)
             user.save()
             refresh = RefreshToken.for_user(user)
