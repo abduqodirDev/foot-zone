@@ -263,6 +263,9 @@ class UserInfoAPIView(RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user
+    #
+    # def put(self, request, *args, **kwargs):
+    #     serializer = self.serializer_class(data=request.data)
 
 
 class UserLoginAPIView(APIView):
@@ -287,7 +290,8 @@ class UserLoginAPIView(APIView):
                     'status': True,
                     'access': str(refresh.access_token),
                     'refresh': str(refresh),
-                    'user_id': user.id
+                    'user_id': user.id,
+                    'role': user.role
                 }
                 return Response(context)
             context = {

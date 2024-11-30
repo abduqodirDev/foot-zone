@@ -71,9 +71,21 @@ class PostUserInfoSerializer(serializers.Serializer):
 
 
 class UserInfoSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(required=False, write_only=True)
     class Meta:
         model = User
-        fields = ('id', 'last_name', 'first_name', 'middle_name', 'date_of_birth', 'sex', 'email', 'phone_number')
+        fields = ('id', 'last_name', 'first_name', 'phone_number', 'password')
+
+    def update(self, instance, validated_data):
+        instance.first_name = validated_data.get("first_name", instance.first_name)
+        instance.last_name = validated_data.get("last_name", instance.last_name)
+        instance.phone_number = validated_data.get("phone_number", instance.phone_number)
+        instance.password = validated_data.get("password", instance.password)
+        if validated_data.get("password"):
+            instance.set_password(validated_data.get("password"))
+
+        instance.save()
+        return instance
 
 
 class UserLoginSerializer(serializers.ModelSerializer):
