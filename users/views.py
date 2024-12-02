@@ -351,7 +351,13 @@ class UserRegisterAPIView(APIView):
                 else:
                     break
 
-            user = User.objects.create(username=username, first_name=first_name, last_name=last_name, phone_number=phone_number)
+            user = User.objects.create(
+                username=username,
+                first_name=first_name,
+                last_name=last_name,
+                phone_number=phone_number,
+                role='A'
+            )
             user.set_password(password)
             user.save()
             refresh = RefreshToken.for_user(user)
