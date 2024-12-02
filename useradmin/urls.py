@@ -1,7 +1,8 @@
 from django.urls import path
 
-from useradmin.views import ListUserAPIView
+from useradmin.views import ListStadionAdminAPIView, ListCommonUserAPIView
 
 urlpatterns = [
-    path('users/', ListUserAPIView.as_view(), name='users')
+    path('stadion-admins/', ListStadionAdminAPIView.as_view(), name='stadion-admins'),
+    path('common-users/', ListCommonUserAPIView.as_view(), name='common-users'),
 ]
