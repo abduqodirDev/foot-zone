@@ -1,3 +1,4 @@
+import datetime
 from datetime import date, timedelta
 
 from django.shortcuts import render
@@ -118,4 +119,5 @@ class MyStadionBronListAPIView(ListAPIView):
 
     def get_queryset(self):
         stadion = self.request.user.stadions.all().first()
-        return self.queryset.filter(stadion=stadion)
+        current_time = date.today()
+        return self.queryset.filter(stadion=stadion, date__gte=current_time-datetime.timedelta(days=7))
