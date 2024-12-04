@@ -55,3 +55,9 @@ class MyBronstadionSerializer(serializers.ModelSerializer):
             data['bron-status'] = 'Bekor qilingan'
 
         return data
+
+
+class MyStadionBronSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BronStadion
+        fields = "__all__"

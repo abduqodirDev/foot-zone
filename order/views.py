@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from order.models import BronStadion, TASDIQLANGAN
-from order.serializers import BronStadionSerializer, BronStadionPostSerializer, MyBronstadionSerializer
+from order.serializers import BronStadionSerializer, BronStadionPostSerializer, MyBronstadionSerializer, MyStadionBronSerializer
 from stadion.models import Stadion
 
 
@@ -110,3 +110,12 @@ class MyBronStadion(ListAPIView):
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user)
 
+
+class MyStadionBronListAPIView(ListAPIView):
+    serializer_class = MyStadionBronSerializer
+    queryset = BronStadion.objects.all()
+    permission_classes = [IsAuthenticated, ]
+
+    def get_queryset(self):
+        stadion = self.request.user.stadions.all().first()
+        return self.queryset.filter(stadion=stadion)
