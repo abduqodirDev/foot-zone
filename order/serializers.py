@@ -5,6 +5,13 @@ from rest_framework.exceptions import ValidationError
 
 from order.models import BronStadion
 from stadion.serializers import StadionSerializer
+from users.models import User
+
+
+class UserInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'first_name', 'last_name', 'phone_number')
 
 
 class BronStadionSerializer(serializers.ModelSerializer):
@@ -58,6 +65,7 @@ class MyBronstadionSerializer(serializers.ModelSerializer):
 
 
 class MyStadionBronSerializer(serializers.ModelSerializer):
+    user = UserInfoSerializer()
     class Meta:
         model = BronStadion
         fields = "__all__"

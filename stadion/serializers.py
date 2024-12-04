@@ -54,3 +54,9 @@ class StadionDetailSerializer(serializers.ModelSerializer, StadionReviewMixin):
         reviews = instance.stadionreviews.all()
         data['reviews'] =ReviewSerializer(reviews, many=True).data
         return data
+
+
+class StadionAddSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Stadion
+        fields = "__all__"
