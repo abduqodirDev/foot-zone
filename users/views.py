@@ -157,7 +157,7 @@ class VerifyOtpAPIView(APIView):
                 for bron in brons:
                     bronstadion = BronStadion.objects.get(id=bron, is_active=False, status='F')
                     bronstadion.status = 'T'
-                    bronstadion.is_active = True
+                    bronstadion.is_active = False
                     bronstadion.user = user
                     bronstadion.save()
 
@@ -227,7 +227,7 @@ class PostUserInfoAPIView(APIView):
             for bron in brons:
                 bronstadion = BronStadion.objects.get(id=bron, is_active=False, status='F')
                 bronstadion.status = 'T'
-                bronstadion.is_active = True
+                bronstadion.is_active = False
                 bronstadion.user = user
                 bronstadion.save()
             user.first_name = first_name
