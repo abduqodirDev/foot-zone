@@ -60,3 +60,9 @@ class StadionAddSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stadion
         fields = "__all__"
+
+
+class AllStadionMapSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Stadion
+        fields = ('id', 'title', 'latitude', 'longitude')

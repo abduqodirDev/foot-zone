@@ -3,7 +3,8 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView
 from rest_framework.permissions import IsAuthenticated
 
 from stadion.models import Stadion
-from stadion.serializers import StadionSerializer, StadionDetailSerializer, StadionAddSerializer
+from stadion.serializers import StadionSerializer, StadionDetailSerializer, StadionAddSerializer, \
+    AllStadionMapSerializer
 
 
 class StadionListAPIView(ListAPIView):
@@ -25,3 +26,7 @@ class AddStadionAPIView(CreateAPIView):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
+
+class AllStadionMapAPIView(ListAPIView):
+    serializer_class = AllStadionMapSerializer
+    queryset = Stadion.objects.all()
