@@ -119,9 +119,8 @@ class MyStadionBronListAPIView(ListAPIView):
     permission_classes = [IsAuthenticated, ]
 
     def get_queryset(self):
-        stadion = self.request.user.stadions.all().first()
         current_time = date.today()
-        return self.queryset.filter(stadion=stadion, date__gte=current_time-datetime.timedelta(days=7), user__isnull=False)
+        return self.queryset.filter(user=self.request.user, date__gte=current_time-datetime.timedelta(days=7), user__isnull=False)
 
 
 class VerifyBronAPIView(APIView):
