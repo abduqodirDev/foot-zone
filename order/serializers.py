@@ -70,6 +70,61 @@ class MyStadionBronSerializer(serializers.ModelSerializer):
         model = BronStadion
         fields = "__all__"
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        time = data.get('time', None)
+        if time == '0':
+            data['time'] = '00.00-01.00'
+        elif time == '1':
+            data['time'] = '01.00-02.00'
+        elif time == '2':
+            data['time'] = '02.00-03.00'
+        elif time == '3':
+            data['time'] = '03.00-04.00'
+        elif time == '4':
+            data['time'] = '04.00-05.00'
+        elif time == '5':
+            data['time'] = '05.00-06.00'
+        elif time == '6':
+            data['time'] = '06.00-07.00'
+        elif time == '7':
+            data['time'] = '07.00-08.00'
+        elif time == '8':
+            data['time'] = '08.00-09.00'
+        elif time == '9':
+            data['time'] = '09.00-10.00'
+        elif time == '10':
+            data['time'] = '10.00-11.00'
+        elif time == '11':
+            data['time'] = '11.00-12.00'
+        elif time == '12':
+            data['time'] = '12:00-13.00'
+        elif time == '13':
+            data['time'] = '13.00-14.00'
+        elif time == '14':
+            data['time'] = '14.00-15.00'
+        elif time == '15':
+            data['time'] = '15.00-16.00'
+        elif time == '16':
+            data['time'] = '16:00-17.00'
+        elif time == '17':
+            data['time'] = '17.00-18.00'
+        elif time == '18':
+            data['time'] = '18.00-19.00'
+        elif time == '19':
+            data['time'] = '19.00-20.00'
+        elif time == '20':
+            data['time'] = '20:00-21.00'
+        elif time == '21':
+            data['time'] = '21.00-22.00'
+        elif time == '22':
+            data['time'] = '22.00-23.00'
+        elif time == '23':
+            data['time'] = '23.00-00.00'
+        else:
+            data['time'] = None
+        return data
+
 
 class VerifyBronSerializer(serializers.Serializer):
     bron_id = serializers.IntegerField(min_value=0, required=True)
