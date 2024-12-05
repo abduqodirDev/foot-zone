@@ -69,3 +69,8 @@ class MyStadionBronSerializer(serializers.ModelSerializer):
     class Meta:
         model = BronStadion
         fields = "__all__"
+
+
+class VerifyBronSerializer(serializers.Serializer):
+    bron_id = serializers.IntegerField(min_value=0, required=True)
+    is_active = serializers.BooleanField(required=True)

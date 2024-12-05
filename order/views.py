@@ -9,7 +9,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from order.models import BronStadion, TASDIQLANGAN
-from order.serializers import BronStadionSerializer, BronStadionPostSerializer, MyBronstadionSerializer, MyStadionBronSerializer
+from order.serializers import BronStadionSerializer, BronStadionPostSerializer, MyBronstadionSerializer, \
+    MyStadionBronSerializer, VerifyBronSerializer
 from stadion.models import Stadion
 
 
@@ -121,3 +122,44 @@ class MyStadionBronListAPIView(ListAPIView):
         stadion = self.request.user.stadions.all().first()
         current_time = date.today()
         return self.queryset.filter(stadion=stadion, date__gte=current_time-datetime.timedelta(days=7), user__isnull=False)
+
+
+class VerifyBronAPIView(APIView):
+    serializer_class = VerifyBronSerializer
+    http_method_names = ['post', ]
+
+    def post(self, request, *args, **kwargs):
+        context_data = {
+            "status": False,
+            "message": "Invalid_data"
+        }
+        serializer = VerifyBronSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(context_data, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            data = serializer.validated_data
+            bron_id = data.get('bron_id', None)
+            is_active = data.get('is_active', None)
+            bron = BronStadion.objects.get(id=bron_id)
+            bron.is_active = is_active
+            bron.save()
+            context = {
+                'status': True,
+                'is_active':bron.is_active,
+                'bron_id': bron.id
+            }
+            return Response(context)
+
+        except BronStadion.DoesNotExist:
+            context = {
+                'status': False,
+                'message': 'Bron stadion topilmadi'
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            context = {
+                'status': False,
+                'message': str(e)
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
