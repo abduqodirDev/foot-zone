@@ -163,3 +163,35 @@ class VerifyBronAPIView(APIView):
                 'message': str(e)
             }
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+
+class StadionBronDiagrammaAPIView(APIView):
+    permission_classes = [IsAuthenticated, ]
+    def get(self, request, *args, **kwargs):
+        try:
+            user = request.user
+            context = {}
+            stadion = Stadion.objects.get(user=user)
+            current_time = date.today()
+            bronstadion = BronStadion.objects.filter(stadion=stadion)
+            for i in range(7):
+                time = current_time-timedelta(days=i)
+                just = bronstadion.filter(date=time)
+                if just:
+                    context[f"{time}"] = len(just)
+
+            return Response(context)
+
+        except Stadion.DoesNotExist:
+            context = {
+                'status': False,
+                'message': 'Bu userda stadion mavjud emas'
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            context = {
+                'status': False,
+                'message': str(e)
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
