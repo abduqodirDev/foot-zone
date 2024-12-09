@@ -66,3 +66,9 @@ class AllStadionMapSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stadion
         fields = ('id', 'title', 'latitude', 'longitude')
+
+
+class StadionImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Stadion
+        fields = ('id', 'photo')

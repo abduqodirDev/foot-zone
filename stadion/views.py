@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from stadion.models import Stadion
 from stadion.serializers import StadionSerializer, StadionDetailSerializer, StadionAddSerializer, \
-    AllStadionMapSerializer
+    AllStadionMapSerializer, StadionImageSerializer
 
 
 class StadionListAPIView(ListAPIView):
@@ -29,4 +29,9 @@ class AddStadionAPIView(CreateAPIView):
 
 class AllStadionMapAPIView(ListAPIView):
     serializer_class = AllStadionMapSerializer
+    queryset = Stadion.objects.all()
+
+
+class StadionImageAPIView(ListAPIView):
+    serializer_class = StadionImageSerializer
     queryset = Stadion.objects.all()
