@@ -2,9 +2,9 @@ from django.shortcuts import render
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView
 from rest_framework.permissions import IsAuthenticated
 
-from stadion.models import Stadion
+from stadion.models import Stadion, StadionReview
 from stadion.serializers import StadionSerializer, StadionDetailSerializer, StadionAddSerializer, \
-    AllStadionMapSerializer, StadionImageSerializer
+    AllStadionMapSerializer, StadionImageSerializer, StadionReviewSerializer
 
 
 class StadionListAPIView(ListAPIView):
@@ -35,3 +35,13 @@ class AllStadionMapAPIView(ListAPIView):
 class StadionImageAPIView(ListAPIView):
     serializer_class = StadionImageSerializer
     queryset = Stadion.objects.all()
+
+
+class StadionReviewAPIView(ListAPIView):
+    serializer_class = StadionReviewSerializer
+    queryset = StadionReview.objects.all()
+
+    def get_queryset(self):
+        id = self.kwargs.get('id')
+        stadion = Stadion.objects.get(id=id)
+        return self.queryset.filter(stadion=stadion)

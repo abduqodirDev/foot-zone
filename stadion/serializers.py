@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from stadion.models import Stadion, Images, StadionReview
 from stadion.mixings import StadionReviewMixin
+from users.models import User
 
 
 class ImageSerializer(serializers.ModelSerializer):
@@ -72,3 +73,17 @@ class StadionImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stadion
         fields = ('id', 'photo')
+
+
+class ReviewUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'photo', 'first_name', 'last_name')
+
+
+class StadionReviewSerializer(serializers.ModelSerializer):
+    user = ReviewUserSerializer()
+    class Meta:
+        model = StadionReview
+        # fields = "__all__"
+        exclude = ('stadion',)
