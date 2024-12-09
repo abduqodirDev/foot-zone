@@ -157,7 +157,7 @@ class VerifyOtpAPIView(APIView):
                 for bron in brons:
                     bronstadion = BronStadion.objects.get(id=bron, is_active=False, status='F')
                     bronstadion.status = 'T'
-                    bronstadion.is_active = False
+                    bronstadion.is_active = True
                     bronstadion.user = user
                     bronstadion.save()
 
@@ -172,7 +172,7 @@ class VerifyOtpAPIView(APIView):
 
                 return Response(context, status=status.HTTP_200_OK)
 
-            return Response(serializer.data)
+            # return Response(serializer.data)
 
         except User.DoesNotExist:
             context = {
