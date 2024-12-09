@@ -17,6 +17,12 @@ class ReviewSerializer(serializers.ModelSerializer):
         fields = ('user', 'comment', 'rank', 'created_at')
 
 
+class StadionUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'phone_number')
+
+
 class StadionSerializer(serializers.ModelSerializer, StadionReviewMixin):
     comment_count = serializers.SerializerMethodField("get_comment_count")
     rank_ratio = serializers.SerializerMethodField("get_rank_ratio")
@@ -32,6 +38,7 @@ class StadionSerializer(serializers.ModelSerializer, StadionReviewMixin):
 
 
 class StadionDetailSerializer(serializers.ModelSerializer, StadionReviewMixin):
+    user = StadionUserSerializer()
     comment_count = serializers.SerializerMethodField("get_comment_count")
     rank_ratio = serializers.SerializerMethodField("get_rank_ratio")
     class Meta:
