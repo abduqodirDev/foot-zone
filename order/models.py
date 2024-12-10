@@ -5,7 +5,7 @@ from users.models import User
 from order.managers import ActiveBronStadionManager
 
 
-TASDIQLANGAN, TASDIQLANMAGAN = ('T', 'F')
+KUTILMOQDA, TASDIQLANGAN, BEKOR_QILINGAN = ('K', 'T', 'B')
 class BronStadion(models.Model):
     TIMECHOICE = (
         ("0", "00.00-01.00"),
@@ -35,8 +35,9 @@ class BronStadion(models.Model):
     )
 
     STATUSCHOICE = (
+        ("K", "KUTILMOQDA"),
         ("T", "TASDIQLANGAN"),
-        ("F", "TASDIQLANMAGAN")
+        ("B", "BEKOR_QILINGAN")
     )
 
     stadion = models.ForeignKey(Stadion, on_delete=models.SET_NULL, null=True, blank=True, related_name="stadion_bronorders")
@@ -44,7 +45,7 @@ class BronStadion(models.Model):
 
     time = models.CharField(max_length=20, choices=TIMECHOICE)
     date = models.DateField()
-    status = models.CharField(max_length=20, choices=STATUSCHOICE, default=TASDIQLANMAGAN)
+    status = models.CharField(max_length=20, choices=STATUSCHOICE, default=KUTILMOQDA)
     is_active = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -58,3 +59,6 @@ class BronStadion(models.Model):
         verbose_name = "Bron stadion"
         verbose_name_plural = "Bron stadionlar"
         db_table = "bronstadion"
+        constraints = [
+            models.UniqueConstraint(fields=['time', 'date', 'status', 'is_active'], name='unique_bron_stadion')
+        ]

@@ -54,7 +54,7 @@ class BronStadionAPIView(APIView):
             }
             return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
-    def post(self, request, id, *args, **kwargs):
+    def post(self, request, id):
         data = request.data
         serializer = BronStadionPostSerializer(data=data)
         try:

@@ -17,7 +17,7 @@ class UserInfoSerializer(serializers.ModelSerializer):
 class BronStadionSerializer(serializers.ModelSerializer):
     class Meta:
         model = BronStadion
-        fields = ('id', 'time', 'date')
+        fields = ('id', 'time') # date olib tashlandi
 
 
 class BronStadionPostSerializer(serializers.Serializer):

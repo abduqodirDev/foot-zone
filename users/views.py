@@ -232,6 +232,7 @@ class PostUserInfoAPIView(APIView):
                 bronstadion.save()
             user.first_name = first_name
             user.last_name = last_name
+            user.is_active = True
             user.save()
 
             refresh = RefreshToken.for_user(user)
