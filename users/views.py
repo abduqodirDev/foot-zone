@@ -60,7 +60,7 @@ class LoginAPIView(APIView):
                 return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
         except User.DoesNotExist:
-            random = str(uuid.uuid4())[0]
+            random = str(uuid.uuid4()).split('-')[-1]
 
             username = f"footzone-username-{random}"
             while True:
@@ -71,14 +71,8 @@ class LoginAPIView(APIView):
                     break
 
             password = f"footzone-password-{random}"
-            while True:
-                if User.objects.filter(password=password).exists():
-                    random = str(uuid.uuid4())[0]
-                    password = f"footzone-password-{random}"
-                else:
-                    break
 
-            user = User.objects.create(phone_number=phone_number, username=username, password=password, is_active=False)
+            user = User.objects.create(phone_number=phone_number, username=username, is_active=False)
             user.set_password(password)
             user.save()
             if self.check_verify_otp_code(user):
@@ -122,7 +116,6 @@ class VerifyOtpAPIView(APIView):
         data = serializer.validated_data
         user_new = data['user_new']
         user_id = data['user_id']
-        stadion_id = data.get('stadion_id', None)
         code = data['code']
         brons = data.get('brons', None)
         try:
@@ -155,8 +148,8 @@ class VerifyOtpAPIView(APIView):
 
             else:
                 for bron in brons:
-                    bronstadion = BronStadion.objects.get(id=bron, is_active=False, status='F')
-                    bronstadion.status = 'T'
+                    bronstadion = BronStadion.objects.get(id=bron, is_active=False, status='K')
+                    # bronstadion.status = 'T'
                     bronstadion.is_active = False
                     bronstadion.user = user
                     bronstadion.save()
@@ -191,7 +184,7 @@ class VerifyOtpAPIView(APIView):
         except BronStadion.DoesNotExist:
             context = {
                 'status': False,
-                'message': 'Error!!!'
+                'message': 'Bron stadion topilmadi'
             }
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
@@ -225,8 +218,8 @@ class PostUserInfoAPIView(APIView):
         try:
             user = User.objects.get(id=user_id)
             for bron in brons:
-                bronstadion = BronStadion.objects.get(id=bron, is_active=False, status='F')
-                bronstadion.status = 'T'
+                bronstadion = BronStadion.objects.get(id=bron, is_active=False, status='K')
+                # bronstadion.status = 'T'
                 bronstadion.is_active = False
                 bronstadion.user = user
                 bronstadion.save()

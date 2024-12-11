@@ -9,6 +9,7 @@ urlpatterns = [
     path('login/', LoginAPIView.as_view(), name='login'),
     path('verify/', VerifyOtpAPIView.as_view(), name='verify'),
     path('post-user-info/', PostUserInfoAPIView.as_view(), name='post-user-info'),
+
     path('user-info/', UserInfoAPIView.as_view(), name='user-info'),
     path('token/', TokenObtainPairView.as_view(), name='token'),
 

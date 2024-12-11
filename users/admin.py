@@ -10,7 +10,7 @@ from users.models import User, VerificationOtp
 class UserAdmin(UserAdmin):
     fieldsets = (
         (None, {"fields": ("username", "password")}),
-        (_("Personal info"), {"fields": ("first_name", "last_name", "phone_number", "email", "middle_name", "date_of_birth", "sex", "role", "photo")}),
+        (_("Personal info"), {"fields": ("first_name", "last_name", "phone_number", "email", "role", "photo")}),
         (
             _("Permissions"),
             {
@@ -34,7 +34,7 @@ class UserAdmin(UserAdmin):
             },
         ),
     )
-    list_display = ("username", "first_name", "last_name", "role", "is_staff")
+    list_display = ("username", "first_name", "last_name", "role", "is_staff", "is_active")
 
 admin.site.unregister(Group)
 

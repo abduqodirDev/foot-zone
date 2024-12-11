@@ -42,7 +42,6 @@ class VerifyOtpSerializer(serializers.Serializer):
         user_id = data['user_id']
         user_new = data['user_new']
         code = data['code']
-        brons = data.get('brons', None)
         context = {
             'status': False,
             'message': 'Invalid_data'
@@ -53,7 +52,7 @@ class VerifyOtpSerializer(serializers.Serializer):
         if len(code) != 4 or not str(code).isdigit():
             raise ValidationError(context)
 
-        if user_new and "brons" in data:
+        if (user_new and "brons" in data) or (user_new==False and "brons" not in data):
             raise ValidationError(context)
 
         return data
