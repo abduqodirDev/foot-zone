@@ -142,10 +142,15 @@ class VerifyBronAPIView(APIView):
             is_active = data.get('is_active', None)
             bron = BronStadion.objects.get(id=bron_id)
             bron.is_active = is_active
+            if is_active:
+                bron.status = 'T'
+            else:
+                bron.status = 'B'
             bron.save()
             context = {
                 'status': True,
-                'is_active':bron.is_active,
+                'is_active': bron.is_active,
+                'bron_status': bron.status,
                 'bron_id': bron.id
             }
             return Response(context)
