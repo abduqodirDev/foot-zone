@@ -75,6 +75,20 @@ class BronStadionAPIView(APIView):
 
             stadion = Stadion.objects.get(id=id)
             bron_id = []
+            if request.user.is_authenticated:
+                for dict in data['brons']:
+                    time = dict['bron']
+                    date = dict['date']
+                    bron = BronStadion.objects.create(user=request.user, stadion=stadion, time=time, date=date)
+                    bron_id.append(bron.id)
+                context = {
+                    "status": True,
+                    "message": "Bron stadions was saved successfully",
+                    "bron_id": bron_id,
+                    "user": request.user.first_name
+                }
+                return Response(context)
+
             for dict in data['brons']:
                 time = dict['bron']
                 date = dict['date']
