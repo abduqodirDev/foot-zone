@@ -140,14 +140,26 @@ class VerifyOtpAPIView(APIView):
             verify.save()
 
             if action_status == 'auth':
-                context = {
-                    'status': True,
-                    'action_status': 'auth',
-                    'message': 'code saved successfully',
-                    'user_id': user_id,
-                    'is_active': user.is_active
-                }
-                return Response(context)
+                if user_new:
+                    context = {
+                        'status': True,
+                        'action_status': 'auth',
+                        'message': 'code saved successfully',
+                        'user_id': user_id,
+                        'is_active': user.is_active
+                    }
+                    return Response(context)
+                else:
+                    refresh = RefreshToken.for_user(user)
+                    context = {
+                        'status': True,
+                        'action_status': 'auth',
+                        'user_new': user_new,
+                        'access': str(refresh.access_token),
+                        'refresh': str(refresh)
+                    }
+                    return Response(context, status=status.HTTP_200_OK)
+
             else:
                 if user_new:
                     context = {
