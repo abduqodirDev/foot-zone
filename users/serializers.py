@@ -32,6 +32,7 @@ class VerifyOtpSerializer(serializers.Serializer):
     user_new = serializers.BooleanField(required=True)
     user_id = serializers.IntegerField(required=True)
     code = serializers.CharField(required=True)
+    action_status = serializers.ChoiceField(choices=['auth', 'bron'], required=True)
     brons = serializers.ListField(
         child=serializers.IntegerField(min_value=0),
         allow_empty=False,
@@ -42,17 +43,22 @@ class VerifyOtpSerializer(serializers.Serializer):
         user_id = data['user_id']
         user_new = data['user_new']
         code = data['code']
+        action_status = data['action_status']
         context = {
             'status': False,
             'message': 'Invalid_data'
         }
+
+        if action_status == 'auth' and "brons" in data:
+            raise ValidationError(context)
+        elif action_status == 'bron':
+            if (user_new and "brons" in data) or (user_new == False and "brons" not in data):
+                raise ValidationError(context)
+
         if user_id < 0:
             raise ValidationError(context)
 
         if len(code) != 4 or not str(code).isdigit():
-            raise ValidationError(context)
-
-        if (user_new and "brons" in data) or (user_new==False and "brons" not in data):
             raise ValidationError(context)
 
         return data
@@ -62,11 +68,23 @@ class PostUserInfoSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=30, required=True)
     surname = serializers.CharField(max_length=30, required=True)
     user_id = serializers.IntegerField(required=True)
+    action_status = serializers.ChoiceField(choices=['auth', 'bron'], required=True)
     brons = serializers.ListField(
         child=serializers.IntegerField(min_value=0),
         allow_empty=False,
         required=False
     )
+
+    def validate(self, data):
+        context = {
+            'status': False,
+            'message': 'Invalid_data'
+        }
+        action_status = data['action_status']
+        if (action_status == 'auth' and 'brons' in data) or (action_status == 'bron' and 'brons' not in data):
+            raise ValidationError(context)
+
+        return data
 
 
 class UserInfoSerializer(serializers.ModelSerializer):

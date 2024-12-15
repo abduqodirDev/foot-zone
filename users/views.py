@@ -117,6 +117,7 @@ class VerifyOtpAPIView(APIView):
         user_new = data['user_new']
         user_id = data['user_id']
         code = data['code']
+        action_status = data['action_status']
         brons = data.get('brons', None)
         try:
             user = User.objects.get(id=user_id)
@@ -138,32 +139,44 @@ class VerifyOtpAPIView(APIView):
             verify.is_confirmed = True
             verify.save()
 
-            if user_new:
+            if action_status == 'auth':
                 context = {
                     'status': True,
+                    'action_status': 'auth',
                     'message': 'code saved successfully',
-                    'user_id': user_id
+                    'user_id': user_id,
+                    'is_active': user.is_active
                 }
                 return Response(context)
-
             else:
-                for bron in brons:
-                    bronstadion = BronStadion.objects.get(id=bron, is_active=False, status='K')
-                    # bronstadion.status = 'T'
-                    bronstadion.is_active = False
-                    bronstadion.user = user
-                    bronstadion.save()
+                if user_new:
+                    context = {
+                        'status': True,
+                        'action_status': 'bron',
+                        'message': 'code saved successfully',
+                        'user_id': user_id
+                    }
+                    return Response(context)
 
-                refresh = RefreshToken.for_user(user)
-                context = {
-                    'status': True,
-                    'message1': 'code saved successfully',
-                    'message2': 'barcha bronlar tasdiqlandi',
-                    'access': str(refresh.access_token),
-                    'refresh': str(refresh)
-                }
+                else:
+                    for bron in brons:
+                        bronstadion = BronStadion.objects.get(id=bron, is_active=False, status='K')
+                        # bronstadion.status = 'T'
+                        bronstadion.is_active = False
+                        bronstadion.user = user
+                        bronstadion.save()
 
-                return Response(context, status=status.HTTP_200_OK)
+                    refresh = RefreshToken.for_user(user)
+                    context = {
+                        'status': True,
+                        'action_status': 'bron',
+                        'message1': 'code saved successfully',
+                        'message2': 'barcha bronlar tasdiqlandi',
+                        'access': str(refresh.access_token),
+                        'refresh': str(refresh)
+                    }
+
+                    return Response(context, status=status.HTTP_200_OK)
 
             # return Response(serializer.data)
 
@@ -214,19 +227,32 @@ class PostUserInfoAPIView(APIView):
         first_name = data.get('name', None)
         last_name = data.get('surname', None)
         user_id = data.get('user_id', None)
+        action_status = data.get('action_status', None)
         brons = data.get('brons', None)
         try:
             user = User.objects.get(id=user_id)
+            user.first_name = first_name
+            user.last_name = last_name
+            user.is_active = True
+            user.save()
+            if action_status == 'auth':
+                refresh = RefreshToken.for_user(user)
+                context = {
+                    'status': True,
+                    'action_status': 'auth',
+                    'user_id': user.id,
+                    'is_active': user.is_active,
+                    'access': str(refresh.access_token),
+                    'refresh': str(refresh)
+                }
+                return Response(context, status=status.HTTP_200_OK)
+
             for bron in brons:
                 bronstadion = BronStadion.objects.get(id=bron, is_active=False, status='K')
                 # bronstadion.status = 'T'
                 bronstadion.is_active = False
                 bronstadion.user = user
                 bronstadion.save()
-            user.first_name = first_name
-            user.last_name = last_name
-            user.is_active = True
-            user.save()
 
             refresh = RefreshToken.for_user(user)
             context = {
@@ -250,7 +276,7 @@ class PostUserInfoAPIView(APIView):
                 'status': False,
                 'message': str(e)
             }
-            return Response(context)
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserInfoAPIView(RetrieveUpdateAPIView):
