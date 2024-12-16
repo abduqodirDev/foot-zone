@@ -17,6 +17,7 @@ from stadion.models import Stadion
 class BronStadionAPIView(APIView):
     queryset = BronStadion.objects.all()
     serializer_class = BronStadionPostSerializer
+    permission_classes = [IsAuthenticated]
     http_method_names = ['get', 'post']
 
     def get(self, request, id, *args, **kwargs):
@@ -75,33 +76,32 @@ class BronStadionAPIView(APIView):
 
             stadion = Stadion.objects.get(id=id)
             bron_id = []
-            if request.user.is_authenticated:
-                for dict in data['brons']:
-                    time = dict['bron']
-                    date = dict['date']
-                    bron = BronStadion.objects.create(user=request.user, stadion=stadion, time=time, date=date)
-                    bron_id.append(bron.id)
-                context = {
-                    "status": True,
-                    "message": "Bron stadions was saved successfully",
-                    "bron_id": bron_id,
-                    "user": request.user.first_name
-                }
-                return Response(context)
-
             for dict in data['brons']:
                 time = dict['bron']
                 date = dict['date']
-                bron = BronStadion.objects.create(stadion=stadion, time=time, date=date)
+                bron = BronStadion.objects.create(user=request.user, stadion=stadion, time=time, date=date)
                 bron_id.append(bron.id)
-
             context = {
                 "status": True,
                 "message": "Bron stadions was saved successfully",
-                "bron_id": bron_id
+                "bron_id": bron_id,
+                "user": request.user.first_name
             }
-
             return Response(context)
+
+            # for dict in data['brons']:
+            #     time = dict['bron']
+            #     date = dict['date']
+            #     bron = BronStadion.objects.create(stadion=stadion, time=time, date=date)
+            #     bron_id.append(bron.id)
+            #
+            # context = {
+            #     "status": True,
+            #     "message": "Bron stadions was saved successfully",
+            #     "bron_id": bron_id
+            # }
+            #
+            # return Response(context)
 
         except Stadion.DoesNotExist:
             context = {
