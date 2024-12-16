@@ -11,6 +11,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from order.models import BronStadion
 from stadion.models import Stadion
+from core.settings import OTP_TIME
 from users.models import User, VerificationOtp
 from users.serializers import LoginSerializer, VerifyOtpSerializer, PostUserInfoSerializer, UserInfoSerializer, \
     UserLoginSerializer, UserRegisterSerializer
@@ -50,6 +51,7 @@ class LoginAPIView(APIView):
                     'message': 'code yuborildi',
                     'action_status': 'login',
                     'user_id': user.id,
+                    'expire_time': OTP_TIME
                 }
                 return Response(context)
             else:
@@ -82,6 +84,7 @@ class LoginAPIView(APIView):
                 'message': 'code yuborildi',
                 'action_status': 'register',
                 'user_id': user.id,
+                'expire_time': OTP_TIME
             }
             return Response(context)
 
