@@ -40,9 +40,9 @@ class Stadion(models.Model):
         verbose_name = 'Stadion'
         verbose_name_plural = 'Stadionlar'
         db_table = "stadion"
-        constraints = [
-            models.UniqueConstraint(fields=['user'], name='unique_user_for_stadium')
-        ]
+        # constraints = [
+        #     models.UniqueConstraint(fields=['user'], name='unique_user_for_stadium')
+        # ]
 
 
 class Images(models.Model):
