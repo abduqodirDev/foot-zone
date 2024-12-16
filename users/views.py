@@ -74,7 +74,7 @@ class LoginAPIView(APIView):
 
             password = f"footzone-password-{random}"
 
-            user = User.objects.create(phone_number=phone_number, username=username, is_active=False)
+            user = User.objects.create(phone_number=phone_number, username=username, is_active=True)
             user.set_password(password)
             user.save()
             code = create_otp_code()
