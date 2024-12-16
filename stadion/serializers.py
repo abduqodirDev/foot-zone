@@ -68,6 +68,11 @@ class StadionAddSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stadion
         fields = "__all__"
+        extra_kwargs = {
+            'description': {'required': False},
+            'price': {'required': False},
+            'title': {'required': False},
+        }
 
 
 class AllStadionMapSerializer(serializers.ModelSerializer):
