@@ -4,7 +4,7 @@ from datetime import date, timedelta
 from django.shortcuts import render
 from rest_framework import status
 from rest_framework.generics import ListAPIView, CreateAPIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -117,6 +117,11 @@ class BronStadionAPIView(APIView):
             }
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            return [AllowAny()]
+        else:
+            return [IsAuthenticated()]
 
 class MyBronStadion(ListAPIView):
     serializer_class = MyBronstadionSerializer
