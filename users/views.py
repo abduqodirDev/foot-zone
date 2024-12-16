@@ -48,7 +48,7 @@ class LoginAPIView(APIView):
                 context = {
                     'status': True,
                     'message': 'code yuborildi',
-                    'user_new': False,
+                    'action_status': 'login',
                     'user_id': user.id,
                 }
                 return Response(context)
@@ -75,22 +75,15 @@ class LoginAPIView(APIView):
             user = User.objects.create(phone_number=phone_number, username=username, is_active=False)
             user.set_password(password)
             user.save()
-            if self.check_verify_otp_code(user):
-                code = create_otp_code()
-                VerificationOtp.objects.create(user=user, code=code)
-                context = {
-                    'status': True,
-                    'message': 'code yuborildi',
-                    'user_new': True,
-                    'user_id': user.id,
-                }
-                return Response(context)
-            else:
-                context = {
-                    'status': False,
-                    'message': 'OTP code allaqachon yuborilgan!!!'
-                }
-                return Response(context, status=status.HTTP_400_BAD_REQUEST)
+            code = create_otp_code()
+            VerificationOtp.objects.create(user=user, code=code)
+            context = {
+                'status': True,
+                'message': 'code yuborildi',
+                'action_status': 'register',
+                'user_id': user.id,
+            }
+            return Response(context)
 
         except Exception as e:
             context = {
