@@ -103,15 +103,12 @@ class VerifyOtpAPIView(APIView):
             'message': 'Invalid_data'
         }
         serializer = VerifyOtpSerializer(data=request.data)
-        if not serializer.is_valid(raise_exception=True):
+        if not serializer.is_valid():
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
         data = serializer.validated_data
-        user_new = data['user_new']
         user_id = data['user_id']
         code = data['code']
-        action_status = data['action_status']
-        brons = data.get('brons', None)
         try:
             user = User.objects.get(id=user_id)
             verifies = user.verificationotps.filter(expires_time__gte=datetime.now(), is_confirmed=False)
@@ -132,77 +129,24 @@ class VerifyOtpAPIView(APIView):
             verify.is_confirmed = True
             verify.save()
 
-            if action_status == 'auth':
-                if user_new:
-                    context = {
-                        'status': True,
-                        'action_status': 'auth',
-                        'message': 'code saved successfully',
-                        'user_id': user_id,
-                        'is_active': user.is_active
-                    }
-                    return Response(context)
-                else:
-                    refresh = RefreshToken.for_user(user)
-                    context = {
-                        'status': True,
-                        'action_status': 'auth',
-                        'user_new': user_new,
-                        'access': str(refresh.access_token),
-                        'refresh': str(refresh)
-                    }
-                    return Response(context, status=status.HTTP_200_OK)
-
+            if user.is_active:
+                action_status = 'login'
             else:
-                if user_new:
-                    context = {
-                        'status': True,
-                        'action_status': 'bron',
-                        'message': 'code saved successfully',
-                        'user_id': user_id
-                    }
-                    return Response(context)
-
-                else:
-                    for bron in brons:
-                        bronstadion = BronStadion.objects.get(id=bron, is_active=False, status='K')
-                        # bronstadion.status = 'T'
-                        bronstadion.is_active = False
-                        bronstadion.user = user
-                        bronstadion.save()
-
-                    refresh = RefreshToken.for_user(user)
-                    context = {
-                        'status': True,
-                        'action_status': 'bron',
-                        'message1': 'code saved successfully',
-                        'message2': 'barcha bronlar tasdiqlandi',
-                        'access': str(refresh.access_token),
-                        'refresh': str(refresh)
-                    }
-
-                    return Response(context, status=status.HTTP_200_OK)
-
-            # return Response(serializer.data)
+                action_status = 'register'
+            refresh = RefreshToken.for_user(user)
+            context = {
+                'status': True,
+                'action_status': action_status,
+                'user_id': user.id,
+                'access': str(refresh.access_token),
+                'refresh': str(refresh)
+            }
+            return Response(context, status=status.HTTP_200_OK)
 
         except User.DoesNotExist:
             context = {
                 'status': False,
                 'message': 'User topilmadi'
-            }
-            return Response(context, status=status.HTTP_400_BAD_REQUEST)
-
-        except Stadion.DoesNotExist:
-            context = {
-                'status': False,
-                'message': 'Stadion topilmadi'
-            }
-            return Response(context, status=status.HTTP_400_BAD_REQUEST)
-
-        except BronStadion.DoesNotExist:
-            context = {
-                'status': False,
-                'message': 'Bron stadion topilmadi'
             }
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
