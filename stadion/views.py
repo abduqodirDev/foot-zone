@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework import status
-from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -92,4 +92,16 @@ class StadionReviewAPIView(ListAPIView):
                 'message': str(e)
             }
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AdminStadionListAPIView(ListAPIView):
+    serializer_class = StadionAddSerializer
+    queryset = Stadion.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+
+        return self.queryset.filter(user=user)
+
 
