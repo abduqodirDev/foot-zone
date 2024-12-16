@@ -160,6 +160,7 @@ class VerifyOtpAPIView(APIView):
 
 class PostUserInfoAPIView(APIView):
     serializer_class = PostUserInfoSerializer
+    permission_classes = [IsAuthenticated]
     http_method_names = ['post']
 
     def post(self, request, *args, **kwargs):
@@ -175,42 +176,18 @@ class PostUserInfoAPIView(APIView):
 
         first_name = data.get('name', None)
         last_name = data.get('surname', None)
-        user_id = data.get('user_id', None)
-        action_status = data.get('action_status', None)
-        brons = data.get('brons', None)
         try:
-            user = User.objects.get(id=user_id)
+            user = request.user
             user.first_name = first_name
             user.last_name = last_name
             user.is_active = True
             user.save()
-            if action_status == 'auth':
-                refresh = RefreshToken.for_user(user)
-                context = {
-                    'status': True,
-                    'action_status': 'auth',
-                    'user_id': user.id,
-                    'is_active': user.is_active,
-                    'access': str(refresh.access_token),
-                    'refresh': str(refresh)
-                }
-                return Response(context, status=status.HTTP_200_OK)
-
-            for bron in brons:
-                bronstadion = BronStadion.objects.get(id=bron, is_active=False, status='K')
-                # bronstadion.status = 'T'
-                bronstadion.is_active = False
-                bronstadion.user = user
-                bronstadion.save()
-
             refresh = RefreshToken.for_user(user)
             context = {
                 'status': True,
-                'message': 'barcha bronlar tasdiqlandi',
-                'access': str(refresh.access_token),
-                'refresh': str(refresh)
+                'message': 'user malumotlari muvaffaqiyatli kiritildi',
+                'user_id': user.id
             }
-
             return Response(context, status=status.HTTP_200_OK)
 
         except User.DoesNotExist:

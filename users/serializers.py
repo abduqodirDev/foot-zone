@@ -52,24 +52,6 @@ class VerifyOtpSerializer(serializers.Serializer):
 class PostUserInfoSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=30, required=True)
     surname = serializers.CharField(max_length=30, required=True)
-    user_id = serializers.IntegerField(required=True)
-    action_status = serializers.ChoiceField(choices=['auth', 'bron'], required=True)
-    brons = serializers.ListField(
-        child=serializers.IntegerField(min_value=0),
-        allow_empty=False,
-        required=False
-    )
-
-    def validate(self, data):
-        context = {
-            'status': False,
-            'message': 'Invalid_data'
-        }
-        action_status = data['action_status']
-        if (action_status == 'auth' and 'brons' in data) or (action_status == 'bron' and 'brons' not in data):
-            raise ValidationError(context)
-
-        return data
 
 
 class UserInfoSerializer(serializers.ModelSerializer):
