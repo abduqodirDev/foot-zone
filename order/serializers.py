@@ -4,6 +4,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from order.models import BronStadion
+from stadion.models import Stadion
 from stadion.serializers import StadionSerializer
 from users.models import User
 
@@ -165,6 +166,8 @@ class MyStadionBronSerializer(serializers.ModelSerializer):
             data['time'] = '23.00-00.00'
         else:
             data['time'] = None
+        stadion_id = data.get('stadion', None)
+        data['stadion'] = Stadion.objects.get(id=stadion_id).title
         return data
 
 
