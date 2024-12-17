@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from rest_framework import status
-from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, RetrieveUpdateAPIView, UpdateAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, RetrieveUpdateAPIView, UpdateAPIView, \
+    DestroyAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -112,6 +113,11 @@ class AdminStadionUpdateAPIView(UpdateAPIView):
     lookup_url_kwarg = 'id'
 
 
+class AdminStadionDeleteAPIView(DestroyAPIView):
+    serializer_class = StadionAddSerializer
+    queryset = Stadion.objects.all()
+    permission_classes = [IsAuthenticated]
+    lookup_url_kwarg = 'id'
 
 
 
