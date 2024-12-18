@@ -237,6 +237,12 @@ class UserLoginAPIView(APIView):
             phone_number = data.get('phone_number', None)
             password = data.get('password', None)
             user = User.objects.get(phone_number=phone_number)
+            if user.role != "A":
+                context = {
+                    'status': False,
+                    'message': 'Siz stadion admini emassiz'
+                }
+                return Response(context, status=status.HTTP_400_BAD_REQUEST)
             if user.check_password(password):
                 refresh = RefreshToken.for_user(user)
                 context = {
