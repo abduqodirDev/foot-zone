@@ -139,8 +139,11 @@ class MyStadionBronListAPIView(ListAPIView):
 
     def get_queryset(self):
         current_time = date.today()
-        stadion = Stadion.objects.filter(user=self.request.user).last()
-        return self.queryset.filter(stadion=stadion, date__gte=current_time-datetime.timedelta(days=7), user__isnull=False)
+        stadions = Stadion.objects.filter(user=self.request.user)
+        query = []
+        for stadion in stadions:
+            query += self.queryset.filter(stadion=stadion, date__gte=current_time-datetime.timedelta(days=7), user__isnull=False)
+        return query
 
 
 class VerifyBronAPIView(APIView):
