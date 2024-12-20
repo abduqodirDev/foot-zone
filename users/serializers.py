@@ -52,6 +52,7 @@ class VerifyOtpSerializer(serializers.Serializer):
 class PostUserInfoSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=30, required=True)
     surname = serializers.CharField(max_length=30, required=True)
+    user_id = serializers.CharField(required=True)
 
 
 class UserInfoSerializer(serializers.ModelSerializer):

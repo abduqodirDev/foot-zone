@@ -165,7 +165,6 @@ class VerifyOtpAPIView(APIView):
 
 class PostUserInfoAPIView(APIView):
     serializer_class = PostUserInfoSerializer
-    permission_classes = [IsAuthenticated]
     http_method_names = ['post']
 
     def post(self, request, *args, **kwargs):
@@ -181,8 +180,9 @@ class PostUserInfoAPIView(APIView):
 
         first_name = data.get('name', None)
         last_name = data.get('surname', None)
+        user_id = data.get('user_id', None)
         try:
-            user = request.user
+            user = User.objects.get(id=user_id)
             user.first_name = first_name
             user.last_name = last_name
             user.is_active = True
@@ -191,7 +191,9 @@ class PostUserInfoAPIView(APIView):
             context = {
                 'status': True,
                 'message': 'user malumotlari muvaffaqiyatli kiritildi',
-                'user_id': user.id
+                'user_id': user.id,
+                'refresh': str(refresh),
+                'access': str(refresh.access_token)
             }
             return Response(context, status=status.HTTP_200_OK)
 
