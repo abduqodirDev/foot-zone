@@ -19,6 +19,8 @@ class LikedStadionView(ListAPIView):
             return LikedStadionSerializer
         elif self.request.method == 'POST':
             return LikedStadionPostSerializer
+        elif self.request.method == 'DELETE':
+            return LikedStadionPostSerializer
 
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user)
