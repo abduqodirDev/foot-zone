@@ -21,7 +21,7 @@ class BronStadionSerializer(serializers.ModelSerializer):
         fields = ('id', 'time') # date olib tashlandi
 
     def to_representation(self, instance):
-        data = super(BronStadionSerializer).to_representation(instance)
+        data = super(BronStadionSerializer, self).to_representation(instance)
         time = data.get('time', None)
         if time == '0':
             data['time'] = '00:00-01:00'
