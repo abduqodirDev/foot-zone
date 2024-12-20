@@ -134,19 +134,26 @@ class VerifyOtpAPIView(APIView):
 
             if user.is_active:
                 action_status = 'login'
+                refresh = RefreshToken.for_user(user)
+                context = {
+                    'status': True,
+                    'action_status': action_status,
+                    'user_id': user.id,
+                    'access': str(refresh.access_token),
+                    'refresh': str(refresh)
+                }
+                return Response(context, status=status.HTTP_200_OK)
             else:
                 action_status = 'register'
                 user.is_active = True
                 user.save()
-            refresh = RefreshToken.for_user(user)
-            context = {
-                'status': True,
-                'action_status': action_status,
-                'user_id': user.id,
-                'access': str(refresh.access_token),
-                'refresh': str(refresh)
-            }
-            return Response(context, status=status.HTTP_200_OK)
+                context = {
+                    'status': True,
+                    'action_status': action_status,
+                    'user_id': user.id
+                }
+                return Response(context, status=status.HTTP_200_OK)
+
 
         except User.DoesNotExist:
             context = {
