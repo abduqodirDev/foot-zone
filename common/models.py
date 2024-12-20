@@ -23,3 +23,6 @@ class LikedStadion(models.Model):
         verbose_name = 'LikedStadion'
         verbose_name_plural = 'LikedStadions'
         db_table = 'likedstadion'
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'stadion'], name='unique_liked_stadion')
+        ]

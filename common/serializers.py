@@ -8,3 +8,7 @@ class LikedStadionSerializer(serializers.ModelSerializer):
     class Meta:
         model = LikedStadion
         fields = "__all__"
+
+
+class LikedStadionPostSerializer(serializers.Serializer):
+    stadion_id = serializers.IntegerField(required=True, min_value=0)
