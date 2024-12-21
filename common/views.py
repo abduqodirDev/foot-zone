@@ -69,18 +69,23 @@ class LikedStadionView(ListAPIView):
         try:
             data = serializer.validated_data
             stadion_id = data.get('stadion_id', None)
-            stadion = Stadion.objects.get(id=stadion_id)
-            LikedStadion.objects.get(user=request.user, stadion=stadion).delete()
+            likedstadion = LikedStadion.objects.get(id=stadion_id)
+            if likedstadion.user != request.user:
+                context = {
+                    'status': False,
+                    'message': 'Sizda huquq yo\'q'
+                }
+                return Response(context, status=status.HTTP_400_BAD_REQUEST)
             context = {
                 'status': True,
                 'message': 'LikedStadion was deleted successfully!!!'
             }
             return Response(context)
 
-        except Stadion.DoesNotExist:
+        except LikedStadion.DoesNotExist:
             context = {
                 'status': False,
-                'message': 'Stadion topilmadi!!!'
+                'message': 'LikedStadion topilmadi!!!'
             }
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
