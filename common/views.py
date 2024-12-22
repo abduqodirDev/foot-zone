@@ -1,11 +1,15 @@
+from datetime import date
+
 from django.shortcuts import render
 from rest_framework import status
-from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from common.models import LikedStadion
 from common.serializers import LikedStadionSerializer, LikedStadionPostSerializer
+from order.models import BronStadion
 from stadion.models import Stadion
 
 
@@ -104,7 +108,19 @@ class LikedStadionView(ListAPIView):
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
 
-class LikedStadionPostDeleteView(RetrieveAPIView):
-    serializer_class = LikedStadionSerializer
-    queryset = LikedStadion.objects.all()
-    lookup_url_kwarg = 'id'
+# class StadionMoneyStatistika(APIView):
+#     permission_classes = [IsAuthenticated]
+#     def get(self, request, *args, **kwargs):
+#         user = request.user
+#         just = int()
+#         if user.role != 'A':
+#             context = {
+#                 'status': False,
+#                 'message': 'Siz admin emassiz!!'
+#             }
+#             return Response(context, status=status.HTTP_400_BAD_REQUEST)
+#         stadions = user.stadions.all()
+#         for stadion in stadions:
+#             bronstadion = stadion.stadion_bronorders.all().filter(date=date.today())
+#
+
