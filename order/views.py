@@ -1,6 +1,7 @@
 import datetime
 from datetime import date, timedelta
 
+from django.db.models import Sum
 from django.shortcuts import render
 from rest_framework import status
 from rest_framework.generics import ListAPIView, CreateAPIView
@@ -198,15 +199,21 @@ class StadionBronDiagrammaAPIView(APIView):
         try:
             user = request.user
             context = {}
-            stadion = Stadion.objects.get(user=user)
+            price = 0
+            stadions = Stadion.objects.filter(user=user)
             current_time = date.today()
-            bronstadion = BronStadion.objects.filter(stadion=stadion)
+            bronstadion = BronStadion.objects.filter(stadion__in=stadions)
+            daily_price = stadions.aggregate(Sum('price'))
             for i in range(7):
                 time = current_time-timedelta(days=i)
                 just = bronstadion.filter(date=time)
+                if i == 0:
+                    for n in just:
+                        price += n.stadion.price
                 if just:
                     context[f"{time}"] = len(just)
-
+            context.update(daily_price)
+            context['daily_price'] = price
             return Response(context)
 
         except Stadion.DoesNotExist:
