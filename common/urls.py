@@ -1,10 +1,10 @@
 from django.urls import path
 
-from common.views import LikedStadionView
+from common.views import LikedStadionView, StartsPostAPIView
 
 
 app_name = 'common'
 urlpatterns = [
     path('liked-stadion/', LikedStadionView.as_view(), name='liked-stadion'),
-    # path('stadion-money-statistika/', StadionMoneyStatistika.as_view(), name='stadion-money-statistika'),
+    path('rank-stadion/', StartsPostAPIView.as_view(), name='rank-stadion'),
 ]
