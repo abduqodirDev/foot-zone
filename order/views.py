@@ -199,6 +199,8 @@ class StadionBronDiagrammaAPIView(APIView):
         try:
             user = request.user
             context = {}
+            datee = []
+            bron = []
             price = 0
             stadions = Stadion.objects.filter(user=user)
             current_time = date.today()
@@ -206,14 +208,18 @@ class StadionBronDiagrammaAPIView(APIView):
             daily_price = stadions.aggregate(Sum('price'))
             for i in range(7):
                 time = current_time-timedelta(days=i)
+                datee.append(time)
                 just = bronstadion.filter(date=time)
+                bron.append(len(just))
                 if i == 0:
                     for n in just:
                         price += n.stadion.price
-                if just:
-                    context[f"{time}"] = len(just)
-            context.update(daily_price)
+                # if just:
+                #     context[f"{time}"] = len(just)
+            context['date'] = datee
+            context['bron'] = bron
             context['daily_price'] = price
+            context.update(daily_price)
             return Response(context)
 
         except Stadion.DoesNotExist:
