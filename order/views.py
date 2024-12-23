@@ -216,8 +216,9 @@ class StadionBronDiagrammaAPIView(APIView):
                         price += n.stadion.price
                 # if just:
                 #     context[f"{time}"] = len(just)
-            context['date'] = datee
-            context['bron'] = bron
+
+            context['date'] = reversed(datee)
+            context['bron'] = reversed(bron)
             context['daily_price'] = price
             context.update(daily_price)
             return Response(context)
