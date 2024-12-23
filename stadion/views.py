@@ -6,9 +6,10 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from stadion.models import Stadion, StadionReview
+from stadion.models import Stadion, StadionReview, Images
 from stadion.serializers import StadionSerializer, StadionDetailSerializer, StadionAddSerializer, \
-    AllStadionMapSerializer, StadionImageSerializer, StadionReviewSerializer, StadionAddReviewSerializer
+    AllStadionMapSerializer, StadionImageSerializer, StadionReviewSerializer, StadionAddReviewSerializer, \
+    ImageSerializer
 
 
 class StadionListAPIView(ListAPIView):
@@ -119,5 +120,10 @@ class AdminStadionDeleteAPIView(DestroyAPIView):
     permission_classes = [IsAuthenticated]
     lookup_url_kwarg = 'id'
 
+
+class StadionImagePostAPIView(CreateAPIView):
+    serializer_class = ImageSerializer
+    queryset = Images.objects.all()
+    permission_classes = [IsAuthenticated]
 
 

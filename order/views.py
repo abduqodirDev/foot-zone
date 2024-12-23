@@ -27,7 +27,8 @@ class BronStadionAPIView(APIView):
         current_date = date.today()
         try:
             stadion = Stadion.objects.get(id=id)
-            bronstadions = stadion.stadion_bronorders.filter(date__gte=current_date, is_active=True, status=TASDIQLANGAN)
+            # bronstadions = stadion.stadion_bronorders.filter(date__gte=current_date, is_active=True, status=TASDIQLANGAN)
+            bronstadions = stadion.objects.filter(date__gte=current_date)
             for i in range(7):
                 brons = bronstadions.filter(date=current_date)
                 serializer = BronStadionSerializer(brons, many=True).data
