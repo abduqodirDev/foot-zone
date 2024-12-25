@@ -2,7 +2,7 @@ from django.urls import path
 
 from stadion.views import StadionListAPIView, DetailStadionAPIView, AddStadionAPIView, AllStadionMapAPIView, \
     StadionImageAPIView, StadionReviewAPIView, AdminStadionListAPIView, AdminStadionUpdateAPIView, \
-    AdminStadionDeleteAPIView
+    AdminStadionDeleteAPIView, StadionStatistikaKunAPIView
 
 app_name="stadion"
 urlpatterns = [
@@ -16,4 +16,6 @@ urlpatterns = [
     path('admin-stadion-get/', AdminStadionListAPIView.as_view(), name='admin-stadion-get'),
     path('admin-stadion-put/<int:id>/', AdminStadionUpdateAPIView.as_view(), name='admin-stadion-put'),
     path('admin-stadion-delete/<int:id>/', AdminStadionDeleteAPIView.as_view(), name='admin-stadion-delete'),
+
+    path('statistika-kun/', StadionStatistikaKunAPIView.as_view(), name='statistika-kun'),
 ]

@@ -1,3 +1,5 @@
+from datetime import date, timedelta, datetime
+
 from django.shortcuts import render
 from rest_framework import status
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, RetrieveUpdateAPIView, UpdateAPIView, \
@@ -6,6 +8,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from order.models import BronStadion
 from stadion.models import Stadion, StadionReview, Images
 from stadion.serializers import StadionSerializer, StadionDetailSerializer, StadionAddSerializer, \
     AllStadionMapSerializer, StadionImageSerializer, StadionReviewSerializer, StadionAddReviewSerializer, \
@@ -126,4 +129,64 @@ class StadionImagePostAPIView(CreateAPIView):
     queryset = Images.objects.all()
     permission_classes = [IsAuthenticated]
 
+
+class StadionStatistikaKunAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        stadion_id = request.GET.get('stadion_id', None)
+        stadion_date = request.GET.get('stadion_date', None)
+        try:
+            stadion = Stadion.objects.get(id=stadion_id)
+            start_time = datetime.combine(datetime.today(), stadion.start_time)
+            end_time = datetime.combine(datetime.today(), stadion.end_time)
+            brons = BronStadion.objects.filter(stadion=stadion, date=stadion_date)
+            # print('start_time:', start_time)
+            # print('end_time:', end_time)
+            print('brons:', brons)
+            if stadion.user != user:
+                context = {
+                    'status': False,
+                    'message': 'Siz stadion egasi emassiz'
+                }
+                return Response(context, status.HTTP_400_BAD_REQUEST)
+            # print("start_time:", type(start_time))
+            result = {}
+            context = {}
+            price = 0
+            for bron in brons:
+                price += bron.stadion.price
+            while start_time != end_time:
+                time = int(str(start_time.time()).split(':')[0])
+                print('time:', time)
+                for bron in brons:
+                    print('bron:', int(bron.time))
+                    if int(bron.time) == time:
+                        result[f"{start_time.time().strftime('%H:%M')}"] = True
+                        start_time = start_time + timedelta(hours=1)
+                        continue
+                result[f"{start_time.time().strftime('%H:%M')}"] = False
+                start_time = start_time + timedelta(hours=1)
+
+            context['bron'] = result
+            context['date'] = stadion_date
+            context['bron_count'] = len(brons)
+            context['daromat'] = price
+
+
+            return Response(context)
+
+        except Stadion.DoesNotExist:
+            context = {
+                'status': False,
+                'message': 'Stadion topilmadi'
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+        # except Exception as e:
+        #     context = {
+        #         'status': False,
+        #         'message': str(e)
+        #     }
+        #     return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
