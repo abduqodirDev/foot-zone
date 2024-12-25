@@ -1,7 +1,7 @@
 import datetime
 from datetime import date, timedelta
 
-from django.db.models import Sum
+from django.db.models import Sum, Q
 from django.shortcuts import render
 from rest_framework import status
 from rest_framework.generics import ListAPIView, CreateAPIView
@@ -28,7 +28,7 @@ class BronStadionAPIView(APIView):
         try:
             stadion = Stadion.objects.get(id=id)
             # bronstadions = stadion.stadion_bronorders.filter(date__gte=current_date, is_active=True, status=TASDIQLANGAN)
-            bronstadions = stadion.stadion_bronorders.filter(date__gte=current_date)
+            bronstadions = stadion.stadion_bronorders.filter(~Q(status='B'), date__gte=current_date)
             for i in range(7):
                 brons = bronstadions.filter(date=current_date)
                 serializer = BronStadionSerializer(brons, many=True).data
