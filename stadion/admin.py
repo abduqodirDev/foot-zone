@@ -24,5 +24,5 @@ class ImagesAdmin(admin.ModelAdmin):
 
 @admin.register(StadionReview)
 class StadionReviewAdmin(admin.ModelAdmin):
-    list_display = ['id', 'stadion', 'user', 'rank', 'created_at']
-    list_filter = ['stadion', 'user', 'rank']
+    list_display = ['id', 'stadion', 'user', 'created_at']
+    list_filter = ['stadion', 'user']

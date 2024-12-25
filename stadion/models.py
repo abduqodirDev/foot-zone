@@ -74,7 +74,6 @@ class StadionReview(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     comment = models.TextField()
-    rank = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(5)])
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

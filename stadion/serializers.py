@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
 from stadion.models import Stadion, Images, StadionReview
-from stadion.mixings import StadionReviewMixin
 from users.models import User
 
 
@@ -14,7 +13,7 @@ class ImageSerializer(serializers.ModelSerializer):
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = StadionReview
-        fields = ('user', 'comment', 'rank', 'created_at')
+        fields = ('user', 'comment', 'created_at')
 
 
 class StadionUserSerializer(serializers.ModelSerializer):
@@ -23,33 +22,38 @@ class StadionUserSerializer(serializers.ModelSerializer):
         fields = ('id', 'phone_number')
 
 
-class StadionSerializer(serializers.ModelSerializer, StadionReviewMixin):
-    comment_count = serializers.SerializerMethodField("get_comment_count")
-    rank_ratio = serializers.SerializerMethodField("get_rank_ratio")
+class StadionSerializer(serializers.ModelSerializer):
+    star = serializers.SerializerMethodField("get_star")
     class Meta:
         model = Stadion
-        fields = ['id', 'title', 'address', 'price', 'photo', 'comment_count', 'rank_ratio']
+        fields = ['id', 'title', 'address', 'price', 'photo', 'star']
 
-    def get_comment_count(self, obj):
-        return self.comment_count_def(obj)
+    def get_star(self, obj):
+        count = 0
+        starts = obj.StadionStarts.all()
+        if len(starts) == 0:
+            return 0
+        for star in starts:
+            count += star.rank
+        return count / len(starts)
 
-    def get_rank_ratio(self, obj):
-        return self.rank_ratio_def(obj)
 
-
-class StadionDetailSerializer(serializers.ModelSerializer, StadionReviewMixin):
+class StadionDetailSerializer(serializers.ModelSerializer):
     user = StadionUserSerializer()
-    comment_count = serializers.SerializerMethodField("get_comment_count")
-    rank_ratio = serializers.SerializerMethodField("get_rank_ratio")
+    star = serializers.SerializerMethodField("get_star")
     class Meta:
         model = Stadion
         fields = "__all__"
 
-    def get_comment_count(self, obj):
-        return self.comment_count_def(obj)
+    def get_star(self, obj):
+        count = 0
+        starts = obj.StadionStarts.all()
+        if len(starts) == 0:
+            return 0
+        for star in starts:
+            count += star.rank
+        return count / len(starts)
 
-    def get_rank_ratio(self, obj):
-        return self.rank_ratio_def(obj)
 
     def to_representation(self, instance):
         data = super(StadionDetailSerializer, self).to_representation(instance)
