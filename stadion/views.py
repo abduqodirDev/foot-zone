@@ -318,3 +318,22 @@ class StadionStatistikaYilAPIView(APIView):
                 'message': str(e)
             }
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+
+class StadionStatistikaUmumAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        bron_count = 0
+        price = 0
+        context = {}
+        stadions = user.stadions.all()
+        context['stadion_count'] = len(stadions)
+        for stadion in stadions:
+            count = len(stadion.stadion_bronorders.all())
+            bron_count += count
+            price = stadion.price * count
+        context['bron_count'] = bron_count
+        context['price'] = price
+
+        return Response(context)
