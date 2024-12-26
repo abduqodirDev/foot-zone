@@ -260,3 +260,61 @@ class StadionStatistikaOyAPIView(APIView):
                 'message': str(e)
             }
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+
+class StadionStatistikaYilAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @staticmethod
+    def validate_yil(yil):
+        if not str(yil).isdigit() or len(yil) != 4:
+            return False
+        else:
+            return True
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        stadion_id = request.GET.get('stadion_id', None)
+        yil = request.GET.get('yil', None)
+        if not self.validate_yil(yil):
+            context = {
+                'status': False,
+                'message': "Yilni to'g'ri kiriting"
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            stadion = Stadion.objects.get(id=stadion_id)
+            if stadion.user != user:
+                context = {
+                    'status': False,
+                    'message': 'Siz stadion egasi emassiz'
+                }
+                return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+            brons = BronStadion.objects.filter(stadion=stadion, date__year=yil)
+            context = {}
+            for day in range(1, 13):
+                result = {}
+                bron = brons.filter(date__month=day)
+                result['bron'] = len(bron)
+                result['price'] = stadion.price * len(bron)
+                context[str(day)] = result
+            context['yil'] = yil
+            context['bron_count'] = len(brons)
+            context['daromad'] = stadion.price * len(brons)
+            return Response(context)
+
+        except Stadion.DoesNotExist:
+            context = {
+                'status': False,
+                'message': 'Stadion topilmadi'
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            context = {
+                'status': False,
+                'message': str(e)
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
