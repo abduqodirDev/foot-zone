@@ -1,3 +1,4 @@
+import calendar
 from datetime import date, timedelta, datetime
 
 from django.shortcuts import render
@@ -141,16 +142,12 @@ class StadionStatistikaKunAPIView(APIView):
             start_time = datetime.combine(datetime.today(), stadion.start_time)
             end_time = datetime.combine(datetime.today(), stadion.end_time)
             brons = BronStadion.objects.filter(stadion=stadion, date=stadion_date)
-            # print('start_time:', start_time)
-            # print('end_time:', end_time)
-            print('brons:', brons)
             if stadion.user != user:
                 context = {
                     'status': False,
                     'message': 'Siz stadion egasi emassiz'
                 }
                 return Response(context, status.HTTP_400_BAD_REQUEST)
-            # print("start_time:", type(start_time))
             result = {}
             context = {}
             price = 0
@@ -173,7 +170,6 @@ class StadionStatistikaKunAPIView(APIView):
             context['bron_count'] = len(brons)
             context['daromat'] = price
 
-
             return Response(context)
 
         except Stadion.DoesNotExist:
@@ -183,10 +179,84 @@ class StadionStatistikaKunAPIView(APIView):
             }
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
-        # except Exception as e:
-        #     context = {
-        #         'status': False,
-        #         'message': str(e)
-        #     }
-        #     return Response(context, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            context = {
+                'status': False,
+                'message': str(e)
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
+
+class StadionStatistikaOyAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @staticmethod
+    def validate_yil(yil):
+        if not str(yil).isdigit() or len(yil) != 4:
+            return False
+        else:
+            return True
+
+    @staticmethod
+    def validate_oy(oy):
+        if not str(oy).isdigit() or int(oy) not in range(1, 13):
+            return False
+        else:
+            return True
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        stadion_id = request.GET.get('stadion_id', None)
+        oy = request.GET.get('oy', None)
+        yil = request.GET.get('yil', None)
+        if not self.validate_yil(yil):
+            context = {
+                'status': False,
+                'message': "Yilni to'g'ri kiriting"
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+        if not self.validate_oy(oy):
+            context = {
+                'status': False,
+                'message': "Oyni to'g'ri kiriting"
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            stadion = Stadion.objects.get(id=stadion_id)
+            if stadion.user != user:
+                context = {
+                    'status': False,
+                    'message': 'Siz stadion egasi emassiz'
+                }
+                return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+            brons = BronStadion.objects.filter(stadion=stadion, date__year=yil, date__month=oy)
+            _, days = calendar.monthrange(int(yil), int(oy))
+            context = {}
+            for day in range(1, days+1):
+                result = {}
+                bron = brons.filter(date__day=day)
+                result['bron'] = len(bron)
+                result['price'] = stadion.price * len(bron)
+                context[str(day)] = result
+            context['yil'] = yil
+            context['oy'] = oy
+            context['bron_count'] = len(brons)
+            context['daromad'] = stadion.price * len(brons)
+            return Response(context)
+
+        except Stadion.DoesNotExist:
+            context = {
+                'status': False,
+                'message': 'Stadion topilmadi'
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            context = {
+                'status': False,
+                'message': str(e)
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
