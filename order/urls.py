@@ -10,5 +10,5 @@ urlpatterns = [
     path("my-bron/", MyBronStadion.as_view(), name="my-bron"),
     path("my-stadion-bron/", MyStadionBronListAPIView.as_view(), name="my-stadion-bron"),
     path("verify-stadion-bron/", VerifyBronAPIView.as_view(), name="verify-stadion-bron"),
-    path("stadion-statistika/", StadionBronDiagrammaAPIView.as_view(), name="stadion-statistika"),
+    path("stadion-statistika/<int:id>/", StadionBronDiagrammaAPIView.as_view(), name="stadion-statistika"),
 ]

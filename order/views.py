@@ -196,32 +196,26 @@ class VerifyBronAPIView(APIView):
 
 class StadionBronDiagrammaAPIView(APIView):
     permission_classes = [IsAuthenticated, ]
-    def get(self, request, *args, **kwargs):
+    def get(self, request, id, *args, **kwargs):
         try:
-            user = request.user
             context = {}
-            datee = []
-            bron = []
-            price = 0
-            stadions = Stadion.objects.filter(user=user)
-            current_time = date.today()
-            bronstadion = BronStadion.objects.filter(stadion__in=stadions)
-            daily_price = stadions.aggregate(Sum('price'))
-            for i in range(7):
-                time = current_time-timedelta(days=i)
-                datee.append(time)
-                just = bronstadion.filter(date=time)
-                bron.append(len(just))
-                if i == 0:
-                    for n in just:
-                        price += n.stadion.price
-                # if just:
-                #     context[f"{time}"] = len(just)
+            user = request.user
+            stadion = Stadion.objects.get(id=id)
+            if stadion.user != user:
+                context = {
+                    'status': False,
+                    'message': 'Siz bu stadion admini emassiz'
+                }
+                return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
-            context['date'] = reversed(datee)
-            context['bron'] = reversed(bron)
-            context['daily_price'] = price
-            context.update(daily_price)
+            context['start_time'] = stadion.start_time
+            context['end_time'] = stadion.end_time
+            brons = BronStadion.objects.filter(date=date.today(), stadion=stadion)
+            context['zakazlar_soni'] = len(brons)
+            context['tasdiqlangan_bronlar'] = len(brons.filter(status='T'))
+            context['bekorqilingan_bronlar'] = len(brons.filter(status='B'))
+            context['kutilayotgan_bronlar'] = len(brons.filter(status='K'))
+
             return Response(context)
 
         except Stadion.DoesNotExist:

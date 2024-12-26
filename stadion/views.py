@@ -155,9 +155,7 @@ class StadionStatistikaKunAPIView(APIView):
                 price += bron.stadion.price
             while start_time != end_time:
                 time = int(str(start_time.time()).split(':')[0])
-                print('time:', time)
                 for bron in brons:
-                    print('bron:', int(bron.time))
                     if int(bron.time) == time:
                         result[f"{start_time.time().strftime('%H:%M')}"] = True
                         start_time = start_time + timedelta(hours=1)
