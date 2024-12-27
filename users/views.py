@@ -226,12 +226,13 @@ class UserLoginAPIView(APIView):
 
     def post(self, request, *args, **kwargs):
         serializer = UserLoginSerializer(data=request.data)
-        if not serializer.is_valid():
-            context = {
-                'status': False,
-                'message': 'Invalid_data'
-            }
-            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        # if not serializer.is_valid():
+            # context = {
+            #     'status': False,
+            #     'message': 'Invalid_data'
+            # }
+            # return Response(context, status=status.HTTP_400_BAD_REQUEST)
         try:
             data = serializer.validated_data
             phone_number = data.get('phone_number', None)

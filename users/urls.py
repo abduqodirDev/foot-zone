@@ -4,7 +4,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from users.views import LoginAPIView, VerifyOtpAPIView, PostUserInfoAPIView, UserInfoAPIView, UserLoginAPIView, \
     UserRegisterAPIView
 
-app_name='users'
+app_name = 'users'
 urlpatterns = [
     path('login/', LoginAPIView.as_view(), name='login'),
     path('verify/', VerifyOtpAPIView.as_view(), name='verify'),

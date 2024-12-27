@@ -77,6 +77,9 @@ class UserLoginSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('phone_number', 'password')
+        extra_kwargs = {
+            'phone_number': {'validators': []},
+        }
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
