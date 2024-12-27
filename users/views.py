@@ -63,18 +63,9 @@ class LoginAPIView(APIView):
 
         except User.DoesNotExist:
             random = str(uuid.uuid4()).split('-')[-1]
-
-            username = f"footzone-username-{random}"
-            while True:
-                if User.objects.filter(username=username).exists():
-                    random = str(uuid.uuid4())[0]
-                    username = f"footzone-username-{random}"
-                else:
-                    break
-
             password = f"footzone-password-{random}"
 
-            user = User.objects.create(phone_number=phone_number, username=username, is_active=False)
+            user = User.objects.create(phone_number=phone_number, is_active=False)
             user.set_password(password)
             user.save()
             code = create_otp_code()
@@ -309,18 +300,7 @@ class UserRegisterAPIView(APIView):
                 }
                 return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
-            random = str(uuid.uuid4()).split('-')[-1]
-
-            username = f"footzone-username-{random}"
-            while True:
-                if User.objects.filter(username=username).exists():
-                    random = str(uuid.uuid4()).split('-')[-1]
-                    username = f"footzone-username-{random}"
-                else:
-                    break
-
             user = User.objects.create(
-                username=username,
                 first_name=first_name,
                 last_name=last_name,
                 phone_number=phone_number,

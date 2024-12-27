@@ -13,10 +13,10 @@ class User(AbstractUser):
     USERROLE = (
         ("C", "COMMON-USER"),
         ("A", "STADIONADMIN"),
-        ("S", "SUPERUSER"),
+        ("S", "SUPERADMIN"),
     )
 
-    phone_number = models.CharField(max_length=20, null=True, blank=True, validators=[check_phone_validator,])
+    phone_number = models.CharField(max_length=20, unique=True, validators=[check_phone_validator,])
     photo = models.ImageField(upload_to="user/", null=True, blank=True,
                               validators=[
                                   FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])
@@ -24,7 +24,8 @@ class User(AbstractUser):
                               default="user/default.jpg",
                               verbose_name="Foydalanuvchi rasmi")
     role = models.CharField(max_length=20, choices=USERROLE, default='C')
-
+    username = None
+    USERNAME_FIELD = "phone_number"
     objects = CustomManager()
 
 
