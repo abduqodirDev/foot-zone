@@ -205,8 +205,9 @@ class StadionStatistikaOyAPIView(APIView):
     def get(self, request, *args, **kwargs):
         user = request.user
         stadion_id = request.GET.get('stadion_id', None)
-        oy = request.GET.get('oy', None)
-        yil = request.GET.get('yil', None)
+        data = request.GET.get('data', None)
+        oy = data.split('-')[1]
+        yil = data.split('-')[0]
         if not self.validate_yil(yil):
             context = {
                 'status': False,
