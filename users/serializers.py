@@ -5,24 +5,14 @@ from users.models import User
 
 
 class LoginSerializer(serializers.Serializer):
-    phone_number = serializers.CharField(max_length=20, required=True)
+    phone_number = serializers.CharField(max_length=13, required=True)
 
     def validate_phone_number(self, data):
         context = {
             'status': False,
             'message': 'Invalid_data'
         }
-        if data[0] == '+':
-            if str(data)[1:].isdigit:
-                if data.startswith('+998') and len(str(data)) == 13:
-                    pass
-                elif data.startswith('+') and len(str(data)) == 10:
-                    pass
-                else:
-                    raise ValidationError(context)
-            else:
-                raise ValidationError(context)
-        else:
+        if not data.startswith('+998') or len(data) != 13 or not data[1:].isdigit():
             raise ValidationError(context)
 
         return data
@@ -33,17 +23,14 @@ class VerifyOtpSerializer(serializers.Serializer):
     code = serializers.CharField(required=True)
 
     def validate(self, data):
-        user_id = data['user_id']
-        code = data['code']
+        user_id = data.get('user_id')
+        code = data.get('code')
         context = {
             'status': False,
             'message': 'Invalid_data'
         }
 
-        if user_id < 0:
-            raise ValidationError(context)
-
-        if len(code) != 4 or not str(code).isdigit():
+        if user_id < 0 or len(code) != 4 or not code.isdigit():
             raise ValidationError(context)
 
         return data
@@ -52,7 +39,7 @@ class VerifyOtpSerializer(serializers.Serializer):
 class PostUserInfoSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=30, required=True)
     surname = serializers.CharField(max_length=30, required=True)
-    user_id = serializers.CharField(required=True)
+    user_id = serializers.IntegerField(required=True)
 
 
 class UserInfoSerializer(serializers.ModelSerializer):

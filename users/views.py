@@ -24,8 +24,7 @@ class LoginAPIView(APIView):
 
     @staticmethod
     def check_verify_otp_code(user):
-        verifies = user.verificationotps.all()
-        if verifies.filter(expires_time__gte=datetime.now()).exists():
+        if user.verificationotps.filter(expires_time__gte=datetime.now()).exists():
             return False
         else:
             return True
@@ -39,7 +38,7 @@ class LoginAPIView(APIView):
                 'message': 'Invalid_data'
             }
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
-        phone_number = data['phone_number']
+        phone_number = serializer.validated_data.get('phone_number', None)
 
         try:
             user = User.objects.get(phone_number=phone_number)
@@ -101,8 +100,8 @@ class VerifyOtpAPIView(APIView):
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
         data = serializer.validated_data
-        user_id = data['user_id']
-        code = data['code']
+        user_id = data.get('user_id')
+        code = data.get('code')
         try:
             user = User.objects.get(id=user_id)
             verifies = user.verificationotps.filter(expires_time__gte=datetime.now(), is_confirmed=False)
