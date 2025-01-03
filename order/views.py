@@ -196,6 +196,7 @@ class VerifyBronAPIView(APIView):
 
 class StadionBronDiagrammaAPIView(APIView):
     permission_classes = [IsAuthenticated, ]
+    serializer_class = None
     def get(self, request, id, *args, **kwargs):
         try:
             context = {}

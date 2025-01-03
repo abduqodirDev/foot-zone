@@ -133,6 +133,7 @@ class StadionImagePostAPIView(CreateAPIView):
 
 class StadionStatistikaKunAPIView(APIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = None
     def get(self, request, *args, **kwargs):
         user = request.user
         stadion_id = request.GET.get('stadion_id', None)
@@ -187,6 +188,7 @@ class StadionStatistikaKunAPIView(APIView):
 
 class StadionStatistikaOyAPIView(APIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = None
 
     @staticmethod
     def validate_yil(yil):
@@ -263,6 +265,7 @@ class StadionStatistikaOyAPIView(APIView):
 
 class StadionStatistikaYilAPIView(APIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = None
 
     @staticmethod
     def validate_yil(yil):
@@ -321,6 +324,7 @@ class StadionStatistikaYilAPIView(APIView):
 
 class StadionStatistikaUmumAPIView(APIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = None
     def get(self, request, *args, **kwargs):
         user = request.user
         bron_count = 0

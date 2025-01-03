@@ -42,11 +42,14 @@ class PostUserInfoSerializer(serializers.Serializer):
     user_id = serializers.IntegerField(required=True)
 
 
-class UserInfoSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(required=False, write_only=True)
+class UserAdminInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'last_name', 'first_name', 'phone_number', 'password')
+        extra_kwargs = {
+            "phone_number": {"required": False},
+            "password": {"required": False, "write_only": True}
+        }
 
     def update(self, instance, validated_data):
         instance.first_name = validated_data.get("first_name", instance.first_name)

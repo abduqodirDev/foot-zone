@@ -13,8 +13,8 @@ from order.models import BronStadion
 from stadion.models import Stadion
 from core.settings import OTP_TIME
 from users.models import User, VerificationOtp
-from users.serializers import LoginSerializer, VerifyOtpSerializer, PostUserInfoSerializer, UserInfoSerializer, \
-    UserLoginSerializer, UserRegisterSerializer
+from users.serializers import LoginSerializer, VerifyOtpSerializer, PostUserInfoSerializer, \
+    UserLoginSerializer, UserRegisterSerializer, UserAdminInfoSerializer
 from users.validators import create_otp_code
 
 
@@ -210,14 +210,11 @@ class PostUserInfoAPIView(APIView):
 
 
 class UserInfoAPIView(RetrieveUpdateAPIView):
-    serializer_class = UserInfoSerializer
+    serializer_class = UserAdminInfoSerializer
     permission_classes = [IsAuthenticated,]
 
     def get_object(self):
         return self.request.user
-    #
-    # def put(self, request, *args, **kwargs):
-    #     serializer = self.serializer_class(data=request.data)
 
 
 class UserLoginAPIView(APIView):
@@ -225,13 +222,12 @@ class UserLoginAPIView(APIView):
 
     def post(self, request, *args, **kwargs):
         serializer = UserLoginSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        # if not serializer.is_valid():
-            # context = {
-            #     'status': False,
-            #     'message': 'Invalid_data'
-            # }
-            # return Response(context, status=status.HTTP_400_BAD_REQUEST)
+        if not serializer.is_valid():
+            context = {
+                'status': False,
+                'message': 'Invalid_data'
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
         try:
             data = serializer.validated_data
             phone_number = data.get('phone_number', None)
@@ -316,13 +312,6 @@ class UserRegisterAPIView(APIView):
                 'user_id': user.id
             }
             return Response(context)
-
-        # except User.DoesNotExist:
-        #     context = {
-        #         'status': False,
-        #         'message': 'Bu raqam avval ruyxatdan utgan'
-        #     }
-        #     return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
         except Exception as e:
             context = {
