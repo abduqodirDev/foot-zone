@@ -319,3 +319,54 @@ class UserRegisterAPIView(APIView):
                 'message': str(e)
             }
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ResendSmsAPIView(APIView):
+    serializer_class = LoginSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = LoginSerializer(data=request.data)
+        if not serializer.is_valid():
+            context = {
+                'status': False,
+                'message': 'Invalid_data'
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+        phone_number = serializer.validated_data.get('phone_number', None)
+        try:
+            user = User.objects.get(phone_number=phone_number)
+            verifies = user.verificationotps.filter(user=user, expires_time__gte=datetime.now())
+            if not verifies:
+                context = {
+                    'status': False,
+                    'message': 'Error!!!'
+                }
+                return Response(context, status=status.HTTP_400_BAD_REQUEST)
+            if len(verifies) > 4:
+                context = {
+                    'status': False,
+                    'message': 'Too_many_sms_sended'
+                }
+                return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+            code = create_otp_code()
+            VerificationOtp.objects.create(user=user, code=code)
+            context = {
+                'status': True,
+                'message': 'code qayta yuborildi'
+            }
+            return Response(context)
+
+        except User.DoesNotExist:
+            context = {
+                'status': False,
+                'message': 'User_not_found'
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            context = {
+                'status': False,
+                'message': str(e)
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
