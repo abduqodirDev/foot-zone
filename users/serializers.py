@@ -76,3 +76,18 @@ class UserRegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'phone_number', 'password')
+
+
+class VerifyResetPhoneNumberSerializer(serializers.Serializer):
+    phone_number = serializers.CharField(max_length=13, required=True)
+    code = serializers.CharField(required=True)
+
+    def validate_phone_number(self, data):
+        context = {
+            'status': False,
+            'message': 'Invalid_data'
+        }
+        if not data.startswith('+998') or len(data) != 13 or not data[1:].isdigit():
+            raise ValidationError(context)
+
+        return data

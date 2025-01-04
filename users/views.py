@@ -14,7 +14,7 @@ from stadion.models import Stadion
 from core.settings import OTP_TIME
 from users.models import User, VerificationOtp
 from users.serializers import LoginSerializer, VerifyOtpSerializer, PostUserInfoSerializer, \
-    UserLoginSerializer, UserRegisterSerializer, UserAdminInfoSerializer
+    UserLoginSerializer, UserRegisterSerializer, UserAdminInfoSerializer, VerifyResetPhoneNumberSerializer
 from users.validators import create_otp_code
 
 
@@ -370,3 +370,102 @@ class ResendSmsAPIView(APIView):
                 'message': str(e)
             }
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ResetPhoneNumberAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = LoginSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = LoginSerializer(data=request.data)
+        user = request.user
+        if not serializer.is_valid():
+            context = {
+                'status': False,
+                'message': 'Invalid_data'
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+        phone_number = serializer.validated_data.get('phone_number', None)
+        try:
+            if User.objects.filter(phone_number=phone_number).exists():
+                context = {
+                    'status': False,
+                    'message': "Bu nomer ro'yxatdan o'tgan"
+                }
+                return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+            if user.verificationotps.filter(expires_time__gte=datetime.now()).exists():
+                context = {
+                    'status': False,
+                    'message': 'Siz allaqachon otp code yuborib bolgansiz'
+                }
+                return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+            code = create_otp_code()
+            VerificationOtp.objects.create(user=user, code=code)
+            context = {
+                'status': True,
+                'message': 'kod yuborildi'
+            }
+            return Response(context)
+
+        except Exception as e:
+            context = {
+                'status': False,
+                'message': str(e)
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+
+class VerifyResetPhoneNumberAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = VerifyResetPhoneNumberSerializer
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        context = {
+            'status': False,
+            'message': 'Invalid_data'
+        }
+        serializer = VerifyResetPhoneNumberSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+        data = serializer.validated_data
+        phone_number = data.get('phone_number')
+        code = data.get('code')
+        try:
+            verifies = user.verificationotps.filter(expires_time__gte=datetime.now(), is_confirmed=False)
+            if not verifies:
+                context = {
+                    'status': False,
+                    'message': 'Tasdiqlash vaqtingiz tugadi'
+                }
+                return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+            verify = verifies.last()
+            if verify.code != code:
+                context = {
+                    'status': False,
+                    'message': 'Code xato!!!'
+                }
+                return Response(context, status=status.HTTP_400_BAD_REQUEST)
+            verify.is_confirmed = True
+            verify.save()
+
+            user.phone_number = phone_number
+            user.save()
+            context = {
+                'status': True,
+                'message': 'Telefon nomer muvaffaqiyatli tasdiqlandi'
+            }
+            return Response(context)
+
+
+        except Exception as e:
+            context = {
+                'status': False,
+                'message': str(e)
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
