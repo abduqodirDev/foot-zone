@@ -232,3 +232,17 @@ class StadionBronDiagrammaAPIView(APIView):
                 'message': str(e)
             }
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+
+class MyStadionHistoryBronAPIView(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = MyStadionBronSerializer
+    queryset = BronStadion.objects.all()
+
+    def get_queryset(self):
+        current_time = date.today()
+        stadions = Stadion.objects.filter(user=self.request.user)
+        query = []
+        for stadion in stadions:
+            query += self.queryset.filter(stadion=stadion, date__lte=current_time - datetime.timedelta(days=1), user__isnull=False).order_by('-date')
+        return query
