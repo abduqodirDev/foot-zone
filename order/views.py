@@ -220,7 +220,7 @@ class StadionBronDiagrammaAPIView(APIView):
             context['bekorqilingan_bronlar'] = len(brons.filter(status='B'))
             context['kutilayotgan_bronlar'] = len(brons.filter(status='K'))
 
-            users = BronStadion.objects.values_list('user', flat=True).distinct()
+            users = BronStadion.objects.filter(stadion=stadion).values_list('user', flat=True).distinct()
 
             just1 = list()
             for user in users:
@@ -242,12 +242,12 @@ class StadionBronDiagrammaAPIView(APIView):
             }
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
-        except Exception as e:
-            context = {
-                'status': False,
-                'message': str(e)
-            }
-            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+        # except Exception as e:
+        #     context = {
+        #         'status': False,
+        #         'message': str(e)
+        #     }
+        #     return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
 
 class MyStadionHistoryBronAPIView(ListAPIView):
