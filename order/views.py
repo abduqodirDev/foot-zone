@@ -1,7 +1,7 @@
 import datetime
 from datetime import date, timedelta
 
-from django.db.models import Sum, Q
+from django.db.models import Sum, Q, Count
 from django.shortcuts import render
 from rest_framework import status
 from rest_framework.generics import ListAPIView, CreateAPIView
@@ -13,6 +13,8 @@ from order.models import BronStadion, TASDIQLANGAN
 from order.serializers import BronStadionSerializer, BronStadionPostSerializer, MyBronstadionSerializer, \
     MyStadionBronSerializer, VerifyBronSerializer
 from stadion.models import Stadion
+from users.models import User
+from users.serializers import UserAdminInfoSerializer
 
 
 class BronStadionAPIView(APIView):
@@ -197,6 +199,7 @@ class VerifyBronAPIView(APIView):
 class StadionBronDiagrammaAPIView(APIView):
     permission_classes = [IsAuthenticated, ]
     serializer_class = None
+    
     def get(self, request, id, *args, **kwargs):
         try:
             context = {}
@@ -217,6 +220,19 @@ class StadionBronDiagrammaAPIView(APIView):
             context['bekorqilingan_bronlar'] = len(brons.filter(status='B'))
             context['kutilayotgan_bronlar'] = len(brons.filter(status='K'))
 
+            users = BronStadion.objects.values_list('user', flat=True).distinct()
+
+            just1 = list()
+            for user in users:
+                user = User.objects.get(id=user)
+                just = {}
+                bron = BronStadion.objects.filter(user=user, stadion=stadion)
+                just['user'] = UserAdminInfoSerializer(user).data
+                just['bron'] = len(bron)
+                just1.append(just)
+
+            sorted_a = sorted(just1, key=lambda x: x["bron"], reverse=True)
+            context['users'] = sorted_a
             return Response(context)
 
         except Stadion.DoesNotExist:
