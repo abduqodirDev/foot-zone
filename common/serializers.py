@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from common.models import LikedStadion, Starts
-from stadion.serializers import StadionDetailSerializer, StadionSerializer
+from stadion.serializers import StadionSerializer
 
 
 class LikedStadionSerializer(serializers.ModelSerializer):

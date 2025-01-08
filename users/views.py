@@ -1,7 +1,6 @@
 import uuid
-from datetime import datetime, date
+from datetime import datetime
 
-from django.shortcuts import render
 from rest_framework import status
 from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -9,8 +8,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from order.models import BronStadion
-from stadion.models import Stadion
 from core.settings import OTP_TIME
 from users.models import User, VerificationOtp
 from users.serializers import LoginSerializer, VerifyOtpSerializer, PostUserInfoSerializer, \

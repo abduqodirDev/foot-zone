@@ -1,15 +1,10 @@
-from datetime import date
-
-from django.shortcuts import render
 from rest_framework import status
 from rest_framework.generics import ListAPIView, CreateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from common.models import LikedStadion, Starts
 from common.serializers import LikedStadionSerializer, LikedStadionPostSerializer, StartsPostSerializer
-from order.models import BronStadion
 from stadion.models import Stadion
 
 

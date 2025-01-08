@@ -1,15 +1,14 @@
 import datetime
 from datetime import date, timedelta
 
-from django.db.models import Sum, Q, Count
-from django.shortcuts import render
+from django.db.models import Q
 from rest_framework import status
-from rest_framework.generics import ListAPIView, CreateAPIView
+from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from order.models import BronStadion, TASDIQLANGAN
+from order.models import BronStadion
 from order.serializers import BronStadionSerializer, BronStadionPostSerializer, MyBronstadionSerializer, \
     MyStadionBronSerializer, VerifyBronSerializer
 from stadion.models import Stadion
@@ -231,8 +230,7 @@ class StadionBronDiagrammaAPIView(APIView):
                 just['bron'] = len(bron)
                 just1.append(just)
 
-            sorted_a = sorted(just1, key=lambda x: x["bron"], reverse=True)
-            context['users'] = sorted_a
+            context['users'] = sorted(just1, key=lambda x: x["bron"], reverse=True)
             return Response(context)
 
         except Stadion.DoesNotExist:
@@ -242,12 +240,12 @@ class StadionBronDiagrammaAPIView(APIView):
             }
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
-        # except Exception as e:
-        #     context = {
-        #         'status': False,
-        #         'message': str(e)
-        #     }
-        #     return Response(context, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            context = {
+                'status': False,
+                'message': str(e)
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
 
 class MyStadionHistoryBronAPIView(ListAPIView):

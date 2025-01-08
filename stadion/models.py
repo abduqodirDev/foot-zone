@@ -1,7 +1,6 @@
 from django.db import models
 from django.core.validators import FileExtensionValidator
 from django.utils.html import format_html
-from django.core.validators import MinValueValidator, MaxValueValidator
 
 from users.models import User
 
@@ -40,9 +39,6 @@ class Stadion(models.Model):
         verbose_name = 'Stadion'
         verbose_name_plural = 'Stadionlar'
         db_table = "stadion"
-        # constraints = [
-        #     models.UniqueConstraint(fields=['user'], name='unique_user_for_stadium')
-        # ]
 
 
 class Images(models.Model):
