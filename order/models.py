@@ -41,7 +41,7 @@ class BronStadion(models.Model):
     )
 
     stadion = models.ForeignKey(Stadion, on_delete=models.CASCADE, related_name="stadion_bronorders")
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="user_bronorders")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_bronorders")
 
     time = models.CharField(max_length=20, choices=TIMECHOICE)
     date = models.DateField()
