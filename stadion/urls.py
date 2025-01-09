@@ -3,7 +3,7 @@ from django.urls import path
 from stadion.views import StadionListAPIView, DetailStadionAPIView, AddStadionAPIView, AllStadionMapAPIView, \
     StadionImageAPIView, StadionReviewAPIView, AdminStadionListAPIView, AdminStadionUpdateAPIView, \
     AdminStadionDeleteAPIView, StadionStatistikaKunAPIView, StadionStatistikaOyAPIView, StadionStatistikaYilAPIView, \
-    StadionStatistikaUmumAPIView
+    StadionStatistikaUmumAPIView, StadionStatistikaKunlarAPIView
 
 app_name="stadion"
 urlpatterns = [
@@ -22,4 +22,5 @@ urlpatterns = [
     path('statistika-oy/', StadionStatistikaOyAPIView.as_view(), name='statistika-oy'),
     path('statistika-yil/', StadionStatistikaYilAPIView.as_view(), name='statistika-yil'),
     path('statistika-umum/', StadionStatistikaUmumAPIView.as_view(), name='statistika-umum'),
+    path('statistika-kunlar/', StadionStatistikaKunlarAPIView.as_view(), name='statistika-kunlar'),
 ]

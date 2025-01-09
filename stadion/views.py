@@ -342,3 +342,62 @@ class StadionStatistikaUmumAPIView(APIView):
         context['price'] = price
 
         return Response(context)
+
+
+class StadionStatistikaKunlarAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        stadion_id = request.GET.get('stadion_id', None)
+        date_to = request.GET.get('date_to', None)
+        date_from = request.GET.get('date_from', None)
+
+        try:
+            stadion = Stadion.objects.get(id=stadion_id)
+            if stadion.user != user:
+                context = {
+                    "status": False,
+                    'message': 'Error'
+                }
+                return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+            date_from = datetime.strptime(date_from, '%Y-%m-%d').date()
+            date_to = datetime.strptime(date_to, '%Y-%m-%d').date()
+            brons = BronStadion.objects.filter(date__range=(date_from, date_to))
+            context = {}
+
+            while date_to <= date_from:
+                result = {}
+                bron = brons.filter(date=date_to)
+                result['bron'] = len(bron)
+                result['price'] = stadion.price * len(bron)
+                context[str(date_to)] = result
+
+                date_to += timedelta(days=1)
+
+            context['bron_count'] = len(brons)
+            context['daromad'] = stadion.price * len(brons)
+
+            # for day in range(1, days + 1):
+            #     result = {}
+            #     bron = brons.filter(date__day=day)
+            #     result['bron'] = len(bron)
+            #     result['price'] = stadion.price * len(bron)
+            #     context[str(day)] = result
+
+            return Response(context)
+
+        except Stadion.DoesNotExist:
+            context = {
+                'status': False,
+                'message': 'Stadion not found!!!'
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            context = {
+                'status': False,
+                'message': str(e)
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
