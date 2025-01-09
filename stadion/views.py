@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from order.models import BronStadion
+from order.models import BronStadion, TASDIQLANGAN
 from stadion.models import Stadion, StadionReview, Images
 from stadion.serializers import StadionSerializer, StadionDetailSerializer, StadionAddSerializer, \
     AllStadionMapSerializer, StadionImageSerializer, StadionReviewSerializer, StadionAddReviewSerializer, \
@@ -139,20 +139,23 @@ class StadionStatistikaKunAPIView(APIView):
         stadion_date = request.GET.get('stadion_date', None)
         try:
             stadion = Stadion.objects.get(id=stadion_id)
-            start_time = datetime.combine(datetime.today(), stadion.start_time)
-            end_time = datetime.combine(datetime.today(), stadion.end_time)
-            brons = BronStadion.objects.filter(stadion=stadion, date=stadion_date)
             if stadion.user != user:
                 context = {
                     'status': False,
                     'message': 'Siz stadion egasi emassiz'
                 }
                 return Response(context, status.HTTP_400_BAD_REQUEST)
+
+            start_time = datetime.combine(datetime.today(), stadion.start_time)
+            end_time = datetime.combine(datetime.today(), stadion.end_time)
+            brons = BronStadion.objects.filter(stadion=stadion, date=stadion_date, status=TASDIQLANGAN)
             result = {}
             context = {}
             price = 0
+
             for bron in brons:
                 price += bron.stadion.price
+
             while start_time != end_time:
                 time = int(str(start_time.time()).split(':')[0])
                 for bron in brons:
@@ -232,7 +235,7 @@ class StadionStatistikaOyAPIView(APIView):
                 }
                 return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
-            brons = BronStadion.objects.filter(stadion=stadion, date__year=yil, date__month=oy)
+            brons = BronStadion.objects.filter(stadion=stadion, date__year=yil, date__month=oy, status=TASDIQLANGAN)
             _, days = calendar.monthrange(int(yil), int(oy))
             context = {}
             for day in range(1, days+1):
@@ -293,7 +296,7 @@ class StadionStatistikaYilAPIView(APIView):
                 }
                 return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
-            brons = BronStadion.objects.filter(stadion=stadion, date__year=yil)
+            brons = BronStadion.objects.filter(stadion=stadion, date__year=yil, status=TASDIQLANGAN)
             context = {}
             for day in range(1, 13):
                 result = {}
@@ -332,9 +335,9 @@ class StadionStatistikaUmumAPIView(APIView):
         stadions = user.stadions.all()
         context['stadion_count'] = len(stadions)
         for stadion in stadions:
-            count = len(stadion.stadion_bronorders.all())
+            count = len(stadion.stadion_bronorders.filter(status=TASDIQLANGAN))
             bron_count += count
-            price = stadion.price * count
+            price += stadion.price * count
         context['bron_count'] = bron_count
         context['price'] = price
 
