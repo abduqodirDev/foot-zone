@@ -45,8 +45,9 @@ class PostUserInfoSerializer(serializers.Serializer):
 class UserAdminInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'last_name', 'first_name', 'password')
+        fields = ('id', 'last_name', 'first_name', 'phone_number', 'password')
         extra_kwargs = {
+            "phone_number": {"required": False},
             "password": {"required": False, "write_only": True}
         }
 
