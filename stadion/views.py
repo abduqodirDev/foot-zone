@@ -305,6 +305,7 @@ class StadionStatistikaYilAPIView(APIView):
 
         try:
             stadion = Stadion.objects.get(id=stadion_id)
+            prices = stadion.prices.all()
             if stadion.user != user:
                 context = {
                     'status': False,
@@ -314,15 +315,22 @@ class StadionStatistikaYilAPIView(APIView):
 
             brons = BronStadion.objects.filter(stadion=stadion, date__year=yil, status=TASDIQLANGAN)
             context = {}
+            daromad = 0
+
             for day in range(1, 13):
                 result = {}
+                price = 0
                 bron = brons.filter(date__month=day)
+                for b in bron:
+                    price += prices.get(time=b.time).price
                 result['bron'] = len(bron)
-                result['price'] = stadion.price * len(bron)
+                result['price'] = price
                 context[str(day)] = result
+                daromad += price
+
             context['yil'] = yil
             context['bron_count'] = len(brons)
-            context['daromad'] = stadion.price * len(brons)
+            context['daromad'] = daromad
             return Response(context)
 
         except Stadion.DoesNotExist:
@@ -351,9 +359,13 @@ class StadionStatistikaUmumAPIView(APIView):
         stadions = user.stadions.all()
         context['stadion_count'] = len(stadions)
         for stadion in stadions:
-            count = len(stadion.stadion_bronorders.filter(status=TASDIQLANGAN))
-            bron_count += count
-            price += stadion.price * count
+            just = 0
+            prices = stadion.prices.all()
+            brons = stadion.stadion_bronorders.filter(status=TASDIQLANGAN)
+            for bron in brons:
+                just += prices.get(time=bron.time).price
+            bron_count += len(brons)
+            price += just
         context['bron_count'] = bron_count
         context['price'] = price
 
@@ -371,6 +383,7 @@ class StadionStatistikaKunlarAPIView(APIView):
 
         try:
             stadion = Stadion.objects.get(id=stadion_id)
+            prices = stadion.prices.all()
             if stadion.user != user:
                 context = {
                     "status": False,
@@ -380,20 +393,24 @@ class StadionStatistikaKunlarAPIView(APIView):
 
             date_from = datetime.strptime(date_from, '%Y-%m-%d').date()
             date_to = datetime.strptime(date_to, '%Y-%m-%d').date()
-            brons = BronStadion.objects.filter(date__range=(date_from, date_to))
+            brons = BronStadion.objects.filter(stadion=stadion, date__lte=date_from, date__gte=date_to)
             context = {}
-
+            daromad = 0
             while date_to <= date_from:
                 result = {}
+                price = 0
                 bron = brons.filter(date=date_to)
                 result['bron'] = len(bron)
-                result['price'] = stadion.price * len(bron)
+                for b in bron:
+                    price += prices.get(time=b.time).price
+                result['price'] = price
                 context[str(date_to)] = result
+                daromad += price
 
                 date_to += timedelta(days=1)
 
             context['bron_count'] = len(brons)
-            context['daromad'] = stadion.price * len(brons)
+            context['daromad'] = daromad
 
             # for day in range(1, days + 1):
             #     result = {}
