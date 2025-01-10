@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from stadion.models import Stadion, Images, StadionReview
+from stadion.models import Stadion, Images, StadionReview, StadionPrice
 
 
 class ImagesInline(admin.TabularInline):
@@ -8,9 +8,14 @@ class ImagesInline(admin.TabularInline):
     extra = 1
 
 
+class PriceInline(admin.TabularInline):
+    model = StadionPrice
+    extra = 1
+
+
 @admin.register(Stadion)
 class StadionAdmin(admin.ModelAdmin):
-    inlines = [ImagesInline,]
+    inlines = [ImagesInline, PriceInline]
     list_display = ['title', 'price', 'user', 'start_time', 'end_time', 'photo']
     list_filter = ['price', 'user']
     search_fields = ['title']
