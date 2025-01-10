@@ -16,8 +16,8 @@ class PriceInline(admin.TabularInline):
 @admin.register(Stadion)
 class StadionAdmin(admin.ModelAdmin):
     inlines = [ImagesInline, PriceInline]
-    list_display = ['title', 'price', 'user', 'start_time', 'end_time', 'photo']
-    list_filter = ['price', 'user']
+    list_display = ['title', 'user', 'photo']
+    list_filter = ['user']
     search_fields = ['title']
 
 
@@ -25,6 +25,12 @@ class StadionAdmin(admin.ModelAdmin):
 class ImagesAdmin(admin.ModelAdmin):
     list_display = ['id', 'stadion', 'image', 'image_tag']
     readonly_fields = ('image_tag',)
+
+
+@admin.register(StadionPrice)
+class StadionPriceAdmin(admin.ModelAdmin):
+    list_display = ['id', 'stadion', 'time', 'price']
+    list_filter = ['stadion']
 
 
 @admin.register(StadionReview)

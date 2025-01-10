@@ -8,7 +8,7 @@ from users.models import User
 class Stadion(models.Model):
     title = models.CharField(max_length=200, verbose_name="Stadion nomi")
     description = models.TextField(verbose_name="Stadion haqida")
-    price = models.PositiveBigIntegerField(verbose_name="Stadion narxi")
+    # price = models.PositiveBigIntegerField(verbose_name="Stadion narxi")
     photo = models.ImageField(upload_to="stadion/", null=True, blank=True,
                         validators=[
                                 FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])
@@ -20,8 +20,8 @@ class Stadion(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, related_name="stadions")
 
     address = models.CharField(max_length=300, null=True, blank=True)
-    start_time = models.TimeField(null=True, blank=True, help_text="Stadion boshlanish vaqti")
-    end_time = models.TimeField(null=True, blank=True, help_text="Stadion tugash vaqti")
+    # start_time = models.TimeField(null=True, blank=True, help_text="Stadion boshlanish vaqti")
+    # end_time = models.TimeField(null=True, blank=True, help_text="Stadion tugash vaqti")
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -99,6 +99,14 @@ class StadionPrice(models.Model):
 
     def __str__(self):
         return f"{self.time} for {self.stadion}"
+
+    class Meta:
+        verbose_name = 'Price'
+        verbose_name_plural = 'Prices'
+        db_table = 'price'
+        constraints = [
+            models.UniqueConstraint(fields=['stadion', 'time'], name='unique_price')
+        ]
 
 
 class StadionReview(models.Model):
