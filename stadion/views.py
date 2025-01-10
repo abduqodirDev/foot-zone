@@ -9,7 +9,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from order.models import BronStadion, TASDIQLANGAN
-from stadion.models import Stadion, StadionReview, Images
+from order.utils import format_time
+from stadion.models import Stadion, StadionReview, Images, StadionPrice
 from stadion.serializers import StadionSerializer, StadionDetailSerializer, StadionAddSerializer, \
     AllStadionMapSerializer, StadionImageSerializer, StadionReviewSerializer, StadionAddReviewSerializer, \
     ImageSerializer
@@ -139,6 +140,7 @@ class StadionStatistikaKunAPIView(APIView):
         stadion_date = request.GET.get('stadion_date', None)
         try:
             stadion = Stadion.objects.get(id=stadion_id)
+            prices = stadion.prices.all()
             if stadion.user != user:
                 context = {
                     'status': False,
@@ -146,25 +148,30 @@ class StadionStatistikaKunAPIView(APIView):
                 }
                 return Response(context, status.HTTP_400_BAD_REQUEST)
 
-            start_time = datetime.combine(datetime.today(), stadion.start_time)
-            end_time = datetime.combine(datetime.today(), stadion.end_time)
+            # start_time = datetime.combine(datetime.today(), stadion.start_time)
+            # end_time = datetime.combine(datetime.today(), stadion.end_time)
             brons = BronStadion.objects.filter(stadion=stadion, date=stadion_date, status=TASDIQLANGAN)
             result = {}
             context = {}
             price = 0
 
             for bron in brons:
-                price += bron.stadion.price
+                price += prices.get(time=bron.time).price
 
-            while start_time != end_time:
-                time = int(str(start_time.time()).split(':')[0])
+            # while start_time != end_time:
+            #     time = int(str(start_time.time()).split(':')[0])
+            for time in range(0, 24):
+                t = format_time(str(time)).split('-')[0]
+                result[t] = False
                 for bron in brons:
                     if int(bron.time) == time:
-                        result[f"{start_time.time().strftime('%H:%M')}"] = True
-                        start_time = start_time + timedelta(hours=1)
+                        result[t] = True
                         continue
-                result[f"{start_time.time().strftime('%H:%M')}"] = False
-                start_time = start_time + timedelta(hours=1)
+
+                # else:
+                #     result[str(t)] = False
+                # result[f"{start_time.time().strftime('%H:%M')}"] = False
+                # start_time = start_time + timedelta(hours=1)
 
             context['bron'] = result
             context['date'] = stadion_date
@@ -228,6 +235,7 @@ class StadionStatistikaOyAPIView(APIView):
 
         try:
             stadion = Stadion.objects.get(id=stadion_id)
+            prices = stadion.prices.all()
             if stadion.user != user:
                 context = {
                     'status': False,
@@ -237,17 +245,25 @@ class StadionStatistikaOyAPIView(APIView):
 
             brons = BronStadion.objects.filter(stadion=stadion, date__year=yil, date__month=oy, status=TASDIQLANGAN)
             _, days = calendar.monthrange(int(yil), int(oy))
+
             context = {}
+            daromod = 0
+
             for day in range(1, days+1):
                 result = {}
+                price = 0
                 bron = brons.filter(date__day=day)
                 result['bron'] = len(bron)
-                result['price'] = stadion.price * len(bron)
+                for b in bron:
+                    price += prices.get(time=b.time).price
+                result['price'] = price
                 context[str(day)] = result
+                daromod += price
+
             context['yil'] = yil
             context['oy'] = oy
             context['bron_count'] = len(brons)
-            context['daromad'] = stadion.price * len(brons)
+            context['daromad'] = daromod
             return Response(context)
 
         except Stadion.DoesNotExist:

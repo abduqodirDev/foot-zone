@@ -211,8 +211,8 @@ class StadionBronDiagrammaAPIView(APIView):
                 }
                 return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
-            context['start_time'] = stadion.start_time
-            context['end_time'] = stadion.end_time
+            # context['start_time'] = stadion.start_time
+            # context['end_time'] = stadion.end_time
             brons = BronStadion.objects.filter(date=date.today(), stadion=stadion)
             context['zakazlar_soni'] = len(brons)
             context['tasdiqlangan_bronlar'] = len(brons.filter(status='T'))
