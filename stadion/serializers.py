@@ -26,7 +26,7 @@ class StadionSerializer(serializers.ModelSerializer):
     star = serializers.SerializerMethodField("get_star")
     class Meta:
         model = Stadion
-        fields = ['id', 'title', 'address', 'price', 'photo', 'star']
+        fields = ['id', 'title', 'address', 'photo', 'star']
 
     def get_star(self, obj):
         count = 0
