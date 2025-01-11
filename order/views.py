@@ -35,9 +35,9 @@ class BronStadionAPIView(APIView):
                 serializer = BronStadionSerializer(brons, many=True).data
                 just[f"{current_date}"] = serializer
                 current_date = current_date + timedelta(days=1)
-            just1["start_time"] = stadion.start_time
-            just1["end_time"] = stadion.end_time
-            just1["price"] = stadion.price
+            # just1["start_time"] = stadion.start_time
+            # just1["end_time"] = stadion.end_time
+            # just1["price"] = stadion.price
             data = {
                 'stadion': just1,
                 'brons': just
