@@ -65,6 +65,20 @@ class StadionDetailSerializer(serializers.ModelSerializer):
                 dic['image'] = request.build_absolute_uri(dic['image'])
         reviews = instance.stadionreviews.all()
         data['reviews'] =ReviewSerializer(reviews, many=True).data
+        price = []
+        prices = instance.prices.all()
+        for n in range(0, 24):
+            just = {}
+            just['time'] = n
+            p = prices.filter(time=str(n)).first().price
+            if p:
+                just['price']= p
+            else:
+                just['price'] = instance.price
+            price.append(just)
+
+        data['prices'] = price
+
         return data
 
 
