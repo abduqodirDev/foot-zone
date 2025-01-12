@@ -41,17 +41,17 @@ class BronStadionAPIView(APIView):
             price = []
             prices = stadion.prices.all()
             for n in range(0, 24):
-                just = {}
-                just['time'] = n
+                just1 = {}
+                just1['time'] = n
                 p = prices.filter(time=str(n))
                 if p:
-                    just['price'] = p.first().price
+                    just1['price'] = p.first().price
                 else:
-                    just['price'] = stadion.price
-                price.append(just)
+                    just1['price'] = stadion.price
+                price.append(just1)
 
             data = {
-                'stadion': just1,
+                # 'stadion': just1,
                 'brons': just,
                 'prices': price
             }
