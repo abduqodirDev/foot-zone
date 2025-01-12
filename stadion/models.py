@@ -8,7 +8,7 @@ from users.models import User
 class Stadion(models.Model):
     title = models.CharField(max_length=200, verbose_name="Stadion nomi")
     description = models.TextField(verbose_name="Stadion haqida")
-    # price = models.PositiveBigIntegerField(verbose_name="Stadion narxi")
+    price = models.PositiveBigIntegerField(verbose_name="Stadion narxi", default=0)
     photo = models.ImageField(upload_to="stadion/", null=True, blank=True,
                         validators=[
                                 FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])
