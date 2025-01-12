@@ -110,3 +110,8 @@ class StadionAddReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = StadionReview
         fields = ('comment', )
+
+
+class StadionEditPriceSerializer(serializers.Serializer):
+    time = serializers.IntegerField(required=True, min_value=0, max_value=23)
+    price = serializers.IntegerField(required=True, min_value=0)

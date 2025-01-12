@@ -13,7 +13,7 @@ from order.utils import format_time
 from stadion.models import Stadion, StadionReview, Images, StadionPrice
 from stadion.serializers import StadionSerializer, StadionDetailSerializer, StadionAddSerializer, \
     AllStadionMapSerializer, StadionImageSerializer, StadionReviewSerializer, StadionAddReviewSerializer, \
-    ImageSerializer
+    ImageSerializer, StadionEditPriceSerializer
 
 
 class StadionListAPIView(ListAPIView):
@@ -351,6 +351,7 @@ class StadionStatistikaYilAPIView(APIView):
 class StadionStatistikaUmumAPIView(APIView):
     permission_classes = [IsAuthenticated]
     serializer_class = None
+
     def get(self, request, *args, **kwargs):
         user = request.user
         bron_count = 0
@@ -425,6 +426,60 @@ class StadionStatistikaKunlarAPIView(APIView):
             context = {
                 'status': False,
                 'message': 'Stadion not found!!!'
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            context = {
+                'status': False,
+                'message': str(e)
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+
+class StadionEditPriceAPIView(APIView):
+    http_method_names = ['post']
+    permission_classes = [IsAuthenticated]
+    serializer_class = StadionEditPriceSerializer
+
+    def post(self, request, id, *args, **kwargs):
+        user = request.user
+        try:
+            stadion = Stadion.objects.get(id=id)
+            prices = stadion.prices.all()
+            serializer = StadionEditPriceSerializer(data=request.data)
+            if stadion.user != user:
+                context = {
+                    'status': False,
+                    'message': 'Error'
+                }
+                return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+            if not serializer.is_valid():
+                context = {
+                    'status': False,
+                    'message': 'Invalid_data'
+                }
+                return Response(context, status=status.HTTP_400_BAD_REQUEST)
+            data = serializer.validated_data
+            time = data.get('time')
+            price = data.get('price')
+            Price = prices.filter(time=time)
+            if Price:
+                Price.update(price=price)
+            else:
+                StadionPrice.objects.create(stadion=stadion, time=time, price=price)
+
+            context = {
+                'status': True,
+                'message': 'Yangilandi'
+            }
+            return Response(context)
+
+        except Stadion.DoesNotExist:
+            context = {
+                'status': False,
+                'message': 'Stadion not found'
             }
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
