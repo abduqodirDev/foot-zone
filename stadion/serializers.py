@@ -35,7 +35,7 @@ class StadionSerializer(serializers.ModelSerializer):
             return 0
         for star in starts:
             count += star.rank
-        return count / len(starts)
+        return str(round(count / len(starts), 2))
 
 
 class StadionDetailSerializer(serializers.ModelSerializer):
