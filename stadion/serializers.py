@@ -52,7 +52,7 @@ class StadionDetailSerializer(serializers.ModelSerializer):
             return 0
         for star in starts:
             count += star.rank
-        return str(count / len(starts))
+        return str(round(count / len(starts),1))
 
 
     def to_representation(self, instance):
