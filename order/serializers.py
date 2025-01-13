@@ -64,6 +64,12 @@ class MyBronstadionSerializer(serializers.ModelSerializer):
         time = data.get('time', None)
         if time:
             data['time'] = format_time(time)
+        stadion = instance.stadion
+        prices = stadion.prices.all()
+        price = prices.filter(time=time)
+        if price:
+            data['stadion']['price'] = price.first().price
+
         return data
 
 
