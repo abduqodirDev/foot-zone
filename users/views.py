@@ -12,6 +12,7 @@ from core.settings import OTP_TIME
 from users.models import User, VerificationOtp
 from users.serializers import LoginSerializer, VerifyOtpSerializer, PostUserInfoSerializer, \
     UserLoginSerializer, UserRegisterSerializer, UserAdminInfoSerializer, VerifyResetPhoneNumberSerializer
+from users.utils import send_sms
 from users.validators import create_otp_code
 
 
@@ -42,6 +43,7 @@ class LoginAPIView(APIView):
             if self.check_verify_otp_code(user):
                 code = create_otp_code()
                 VerificationOtp.objects.create(user=user, code=code)
+                send_sms(phone=phone_number[1:], code=code)
                 context = {
                     'status': True,
                     'message': 'code yuborildi',
@@ -66,6 +68,7 @@ class LoginAPIView(APIView):
             user.save()
             code = create_otp_code()
             VerificationOtp.objects.create(user=user, code=code)
+            send_sms(phone=phone_number[1:], code=code)
             context = {
                 'status': True,
                 'message': 'code yuborildi',
@@ -348,6 +351,7 @@ class ResendSmsAPIView(APIView):
 
             code = create_otp_code()
             VerificationOtp.objects.create(user=user, code=code)
+            send_sms(phone=phone_number[1:], code=code)
             context = {
                 'status': True,
                 'message': 'code qayta yuborildi'
@@ -400,6 +404,7 @@ class ResetPhoneNumberAPIView(APIView):
 
             code = create_otp_code()
             VerificationOtp.objects.create(user=user, code=code)
+            send_sms(phone=phone_number[1:], code=code)
             context = {
                 'status': True,
                 'message': 'kod yuborildi'
