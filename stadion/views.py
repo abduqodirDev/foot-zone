@@ -13,7 +13,7 @@ from order.utils import format_time
 from stadion.models import Stadion, StadionReview, Images, StadionPrice
 from stadion.serializers import StadionSerializer, StadionDetailSerializer, StadionAddSerializer, \
     AllStadionMapSerializer, StadionImageSerializer, StadionReviewSerializer, StadionAddReviewSerializer, \
-    ImageSerializer, StadionEditPriceSerializer
+    ImageSerializer, StadionEditPriceSerializer, StadionImagesSerializer, StadionImagesAddSerializer
 
 
 class StadionListAPIView(ListAPIView):
@@ -489,3 +489,62 @@ class StadionEditPriceAPIView(APIView):
                 'message': str(e)
             }
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+
+class StadionImagesAPIView(ListAPIView):
+    serializer_class = StadionImagesSerializer
+    queryset = Images.objects.all()
+    permission_classes = [IsAuthenticated]
+    lookup_url_kwarg = 'id'
+
+    def get_queryset(self):
+        id = self.kwargs.get(self.lookup_url_kwarg)
+        return self.queryset.filter(stadion_id=id)
+
+
+class StadionImagesDeleteAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    http_method_names = ['post']
+
+    def post(self, request, id, pk, *args, **kwargs):
+        try:
+            user = request.user
+            stadion = Stadion.objects.get(id=id)
+            image = Images.objects.get(id=pk)
+            if stadion.user != user or image.stadion != stadion:
+                context = {
+                    'status': False,
+                    'message': 'Error'
+                }
+                return Response(context, status=400)
+            image.delete()
+            context = {
+                'status': True,
+                'message': 'Image deleted'
+            }
+            return Response(context)
+
+        except Images.DoesNotExist:
+            context = {
+                'status': False,
+                'message': 'Image not found'
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+        except Stadion.DoesNotExist:
+            context = {
+                'status': False,
+                'message': 'Stadion not found'
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+
+class StadionImagesAddAPIView(CreateAPIView):
+    serializer_class = StadionImagesAddSerializer
+    queryset = Images.objects.all()
+    permission_classes = [IsAuthenticated]
+    http_method_names = ['post']
+
+    def perform_create(self, serializer):
+        id = self.kwargs.get('id')
+        serializer.save(stadion_id=id)

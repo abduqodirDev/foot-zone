@@ -115,3 +115,17 @@ class StadionAddReviewSerializer(serializers.ModelSerializer):
 class StadionEditPriceSerializer(serializers.Serializer):
     time = serializers.IntegerField(required=True, min_value=0, max_value=23)
     price = serializers.IntegerField(required=True, min_value=0)
+
+
+class StadionImagesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Images
+        fields = ('id', 'image')
+
+
+class StadionImagesAddSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Images
+        fields = ('image', )
+
+
