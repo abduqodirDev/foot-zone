@@ -60,5 +60,5 @@ class BronStadion(models.Model):
         verbose_name_plural = "Bron stadionlar"
         db_table = "bronstadion"
         constraints = [
-            models.UniqueConstraint(fields=['time', 'date', 'user'], name='unique_bron_stadion')
+            models.UniqueConstraint(fields=['time', 'date', 'user', 'stadion'], name='unique_bron_stadion')
         ]
