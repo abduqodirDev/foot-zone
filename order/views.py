@@ -84,7 +84,7 @@ class BronStadionAPIView(APIView):
             stadion = Stadion.objects.get(id=id)
 
             for dict in data['brons']:
-                if BronStadion.ActiveBronStadion.filter(stadion=stadion, date=dict['date'], time=str(dict['bron'])).exists():
+                if BronStadion.objects.filter(~Q(status="B"), stadion=stadion, date=dict['date'], time=str(dict['bron'])).exists():
                     content = {
                         "status": False,
                         "message": "Bu vaqtda stadion bron qilingan!!!"
