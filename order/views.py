@@ -81,16 +81,16 @@ class BronStadionAPIView(APIView):
                     'message': 'Invalid_data'
                 }
                 return Response(context, status=status.HTTP_400_BAD_REQUEST)
+            stadion = Stadion.objects.get(id=id)
 
             for dict in data['brons']:
-                if BronStadion.ActiveBronStadion.filter(date=dict['date'], time=str(dict['bron'])).exists():
+                if BronStadion.ActiveBronStadion.filter(stadion=stadion, date=dict['date'], time=str(dict['bron'])).exists():
                     content = {
                         "status": False,
                         "message": "Bu vaqtda stadion bron qilingan!!!"
                     }
                     return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
-            stadion = Stadion.objects.get(id=id)
             bron_id = []
             for dict in data['brons']:
                 time = dict['bron']
@@ -104,20 +104,6 @@ class BronStadionAPIView(APIView):
                 "user": request.user.first_name
             }
             return Response(context)
-
-            # for dict in data['brons']:
-            #     time = dict['bron']
-            #     date = dict['date']
-            #     bron = BronStadion.objects.create(stadion=stadion, time=time, date=date)
-            #     bron_id.append(bron.id)
-            #
-            # context = {
-            #     "status": True,
-            #     "message": "Bron stadions was saved successfully",
-            #     "bron_id": bron_id
-            # }
-            #
-            # return Response(context)
 
         except Stadion.DoesNotExist:
             context = {
