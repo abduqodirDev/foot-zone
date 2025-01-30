@@ -290,11 +290,18 @@ class UserRegisterAPIView(APIView):
             password = data.get('password', None)
 
             if User.objects.filter(phone_number=phone_number).exists():
+                user = User.objects.get(phone_number=phone_number)
+                user.role = "A"
+                user.set_password(password)
+                user.save()
+                refresh = RefreshToken.for_user(user)
                 context = {
-                    'status': False,
-                    'message': 'Bu raqam avval ruyxatdan utgan'
+                    'status': True,
+                    'access': str(refresh.access_token),
+                    'refresh': str(refresh),
+                    'user_id': user.id
                 }
-                return Response(context, status=status.HTTP_400_BAD_REQUEST)
+                return Response(context)
 
             user = User.objects.create(
                 first_name=first_name,
