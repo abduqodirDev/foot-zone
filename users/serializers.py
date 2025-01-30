@@ -77,6 +77,10 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         model = User
         fields = ('first_name', 'last_name', 'phone_number', 'password')
 
+        extra_kwargs = {
+            "phone_number": {"validators": []}
+        }
+
 
 class VerifyResetPhoneNumberSerializer(serializers.Serializer):
     phone_number = serializers.CharField(max_length=13, required=True)
