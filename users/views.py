@@ -2,16 +2,18 @@ import uuid
 from datetime import datetime
 
 from rest_framework import status
-from rest_framework.generics import RetrieveUpdateAPIView
+from rest_framework.generics import RetrieveUpdateAPIView, ListCreateAPIView, DestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from core.settings import OTP_TIME
-from users.models import User, VerificationOtp
+from users.models import User, VerificationOtp, PhoneNumber
+from users.permissions import StadionAdminPermission
 from users.serializers import LoginSerializer, VerifyOtpSerializer, PostUserInfoSerializer, \
-    UserLoginSerializer, UserRegisterSerializer, UserAdminInfoSerializer, VerifyResetPhoneNumberSerializer
+    UserLoginSerializer, UserRegisterSerializer, UserAdminInfoSerializer, VerifyResetPhoneNumberSerializer, \
+    PhoneNumberSerializer
 from users.utils import send_sms
 from users.validators import create_otp_code
 
@@ -477,4 +479,22 @@ class VerifyResetPhoneNumberAPIView(APIView):
                 'message': str(e)
             }
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+
+class StadionAdminPhoneAPIView(ListCreateAPIView):
+    permission_classes = [StadionAdminPermission]
+    queryset = PhoneNumber.objects.all()
+    serializer_class = PhoneNumberSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user, is_active=True)
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
+
+
+class StadionAdminPhoneDeleteAPIView(DestroyAPIView):
+    permission_classes = [StadionAdminPermission]
+    queryset = PhoneNumber.objects.all()
+    serializer_class = PhoneNumberSerializer
 

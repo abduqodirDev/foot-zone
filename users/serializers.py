@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from users.models import User
+from users.models import User, PhoneNumber
 
 
 class LoginSerializer(serializers.Serializer):
@@ -95,3 +95,13 @@ class VerifyResetPhoneNumberSerializer(serializers.Serializer):
             raise ValidationError(context)
 
         return data
+
+
+class PhoneNumberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PhoneNumber
+        fields = ('id', 'phone_number', 'is_active')
+
+        extra_kwargs = {
+            "user": {"required": False}
+        }

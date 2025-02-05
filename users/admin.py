@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
 from django.utils.translation import gettext_lazy as _
 
-from users.models import User, VerificationOtp
+from users.models import User, VerificationOtp, PhoneNumber
 
 
 @admin.register(User)
@@ -45,3 +45,9 @@ class AdminVerifyOTP(admin.ModelAdmin):
     list_display = ('id', 'user', 'code', 'is_confirmed')
     list_filter = ('user', 'is_confirmed')
     search_fields = ('user', 'code')
+
+
+@admin.register(PhoneNumber)
+class PhoneNumber(admin.ModelAdmin):
+    list_display = ('id', 'phone_number', 'user', 'is_active')
+    list_filter = ('user', 'is_active')

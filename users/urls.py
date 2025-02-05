@@ -2,7 +2,8 @@ from django.urls import path
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from users.views import LoginAPIView, VerifyOtpAPIView, PostUserInfoAPIView, UserInfoAPIView, UserLoginAPIView, \
-    UserRegisterAPIView, ResendSmsAPIView, ResetPhoneNumberAPIView, VerifyResetPhoneNumberAPIView
+    UserRegisterAPIView, ResendSmsAPIView, ResetPhoneNumberAPIView, VerifyResetPhoneNumberAPIView, \
+    StadionAdminPhoneAPIView, StadionAdminPhoneDeleteAPIView
 
 app_name = 'users'
 urlpatterns = [
@@ -19,4 +20,7 @@ urlpatterns = [
 
     path('logiin/', UserLoginAPIView.as_view(), name='logiin'),
     path('register/', UserRegisterAPIView.as_view(), name='register'),
+
+    path('phones/', StadionAdminPhoneAPIView.as_view(), name="stadion-get-post"),
+    path('phones/<int:pk>/', StadionAdminPhoneDeleteAPIView.as_view(), name="stadion-delete"),
 ]
