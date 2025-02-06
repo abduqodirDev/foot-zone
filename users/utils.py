@@ -17,3 +17,5 @@ def send_sms(phone, code):
         "from": "footzone"
     }
     requests.post(url, headers=headers, data=data)
+
+

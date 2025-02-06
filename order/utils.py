@@ -1,3 +1,12 @@
+import requests
+import os
+
+from order.models import BronStadion
+
+token = os.getenv("BEARER")
+base_url = os.getenv("BASE_URL")
+
+
 def format_time(time):
     time_mapping = {
         '0': '00:00-01:00',
@@ -26,3 +35,35 @@ def format_time(time):
         '23': '23:00-00:00',
     }
     return time_mapping.get(time, time)
+
+
+def send_bron_sms(bron_id):
+    for id in bron_id:
+        bron = BronStadion.objects.filter(id=id).first()
+        client_phone_number = bron.user.phone_number
+        stadion = bron.stadion.title
+        date = bron.date
+        time = format_time(bron.time)
+
+        message = f"{client_phone_number} telefon raqami sizning {stadion} stadiongizni {date} sana {time} vaqtda bron qildi, iltimos saytga kirib uni tandiqlang"
+        user = bron.stadion.user
+        phone_numbers = set()
+        phone = user.phone_number
+        phone_numbers.add(phone)
+        numbers = user.phone_numbers.filter(is_active=True)
+        for num in numbers:
+            phone_numbers.add(num.phone_number)
+
+        url = base_url
+        headers = {
+            "Authorization": f"Bearer {token}"
+        }
+        for phone in phone_numbers:
+            data = {
+                "mobile_phone": phone,
+                "message": message,
+                "from": "footzone"
+            }
+
+            requests.post(url, headers=headers, data=data)
+

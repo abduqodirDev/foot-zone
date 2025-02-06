@@ -11,6 +11,7 @@ from rest_framework.views import APIView
 from order.models import BronStadion
 from order.serializers import BronStadionSerializer, BronStadionPostSerializer, MyBronstadionSerializer, \
     MyStadionBronSerializer, VerifyBronSerializer
+from order.utils import send_bron_sms
 from stadion.models import Stadion
 from users.models import User
 from users.serializers import UserAdminInfoSerializer
@@ -97,6 +98,9 @@ class BronStadionAPIView(APIView):
                 date = dict['date']
                 bron = BronStadion.objects.create(user=request.user, stadion=stadion, time=time, date=date)
                 bron_id.append(bron.id)
+
+            send_bron_sms(bron_id)
+
             context = {
                 "status": True,
                 "message": "Bron stadions was saved successfully",
