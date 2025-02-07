@@ -584,3 +584,78 @@ class StadionStatistikaAllKunAPIView(APIView):
                 'message': str(e)
             }
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+
+class StadionStatistikaAllOyAPIView(APIView):
+    permission_classes = [StadionAdminPermission]
+    serializer_class = None
+
+    @staticmethod
+    def validate_yil(yil):
+        if not str(yil).isdigit() or len(yil) != 4:
+            return False
+        else:
+            return True
+
+    @staticmethod
+    def validate_oy(oy):
+        if not str(oy).isdigit() or int(oy) not in range(1, 13):
+            return False
+        else:
+            return True
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        data = request.GET.get('data', None)
+        oy = data.split('-')[1]
+        yil = data.split('-')[0]
+        if not self.validate_yil(yil):
+            context = {
+                'status': False,
+                'message': "Yilni to'g'ri kiriting"
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+        if not self.validate_oy(oy):
+            context = {
+                'status': False,
+                'message': "Oyni to'g'ri kiriting"
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            stadions = user.stadions.all()
+
+            brons = BronStadion.objects.filter(stadion__in=stadions, date__year=yil, date__month=oy, status=TASDIQLANGAN)
+            _, days = calendar.monthrange(int(yil), int(oy))
+
+            context = {}
+            daromod = 0
+
+            for day in range(1, days + 1):
+                result = {}
+                price = 0
+                bron = brons.filter(date__day=day)
+                result['bron'] = len(bron)
+                for b in bron:
+                    a = StadionPrice.objects.filter(stadion=b.stadion, time=b.time).first()
+                    if a:
+                        price += a.price
+                    else:
+                        price += b.stadion.price
+                result['price'] = price
+                context[str(day)] = result
+                daromod += price
+
+            context['yil'] = yil
+            context['oy'] = oy
+            context['bron_count'] = len(brons)
+            context['daromad'] = daromod
+            return Response(context)
+
+        except Exception as e:
+            context = {
+                'status': False,
+                'message': str(e)
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
