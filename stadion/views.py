@@ -659,3 +659,106 @@ class StadionStatistikaAllOyAPIView(APIView):
                 'message': str(e)
             }
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+
+class StadionStatistikaAllYilAPIView(APIView):
+    permission_classes = [StadionAdminPermission]
+    serializer_class = None
+
+    @staticmethod
+    def validate_yil(yil):
+        if not str(yil).isdigit() or len(yil) != 4:
+            return False
+        else:
+            return True
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        yil = request.GET.get('yil', None)
+        if not self.validate_yil(yil):
+            context = {
+                'status': False,
+                'message': "Yilni to'g'ri kiriting"
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            stadions = user.stadions.all()
+
+            brons = BronStadion.objects.filter(stadion__in=stadions, date__year=yil, status=TASDIQLANGAN)
+            context = {}
+            daromad = 0
+
+            for day in range(1, 13):
+                result = {}
+                price = 0
+                bron = brons.filter(date__month=day)
+                for b in bron:
+                    a = StadionPrice.objects.filter(stadion=b.stadion, time=b.time).first()
+                    if a:
+                        price += a.price
+                    else:
+                        price += b.stadion.price
+                result['bron'] = len(bron)
+                result['price'] = price
+                context[str(day)] = result
+                daromad += price
+
+            context['yil'] = yil
+            context['bron_count'] = len(brons)
+            context['daromad'] = daromad
+            return Response(context)
+
+        except Exception as e:
+            context = {
+                'status': False,
+                'message': str(e)
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+
+class StadionStatistikaAllKunlarAPIView(APIView):
+    permission_classes = [StadionAdminPermission]
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        date_to = request.GET.get('date_to', None)
+        date_from = request.GET.get('date_from', None)
+
+        try:
+            stadions = user.stadions.all()
+
+            date_from = datetime.strptime(date_from, '%Y-%m-%d').date()
+            date_to = datetime.strptime(date_to, '%Y-%m-%d').date()
+            brons = BronStadion.objects.filter(stadion__in=stadions, date__lte=date_from, date__gte=date_to)
+            context = {}
+            daromad = 0
+            while date_to <= date_from:
+                result = {}
+                price = 0
+                bron = brons.filter(date=date_to)
+                result['bron'] = len(bron)
+                for b in bron:
+                    a = StadionPrice.objects.filter(stadion=b.stadion, time=b.time).first()
+                    if a:
+                        price += a.price
+                    else:
+                        price += b.stadion.price
+
+                result['price'] = price
+                context[str(date_to)] = result
+                daromad += price
+
+                date_to += timedelta(days=1)
+
+            context['bron_count'] = len(brons)
+            context['daromad'] = daromad
+
+            return Response(context)
+
+        except Exception as e:
+            context = {
+                'status': False,
+                'message': str(e)
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
