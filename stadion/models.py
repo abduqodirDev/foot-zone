@@ -31,6 +31,8 @@ class Stadion(models.Model):
     yoritish = models.BooleanField(default=False)
     parkofka = models.BooleanField(default=False)
     forma = models.BooleanField(default=False)
+    tishli_oyoqkiyim = models.BooleanField(default=False)
+    usti_ochiq_yopiq = models.BooleanField(default=False)
 
     def __str__(self):
         return str(self.title)
