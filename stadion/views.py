@@ -21,6 +21,14 @@ class StadionListAPIView(ListAPIView):
     queryset = Stadion.objects.all()
     serializer_class = StadionSerializer
 
+    def get_queryset(self):
+        tuman = self.request.query_params.get('tuman', None)
+        # query = self.queryset.all()
+        if tuman:
+            return self.queryset.all().filter(tuman__id=tuman)
+        return self.queryset.all()
+
+
 
 class DetailStadionAPIView(RetrieveAPIView):
     queryset = Stadion.objects.all()
