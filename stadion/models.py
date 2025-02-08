@@ -2,10 +2,12 @@ from django.db import models
 from django.core.validators import FileExtensionValidator
 from django.utils.html import format_html
 
+from utils.models import Viloyat, Tuman
 from users.models import User
 
 
 class Stadion(models.Model):
+
     title = models.CharField(max_length=200, verbose_name="Stadion nomi")
     description = models.TextField(verbose_name="Stadion haqida")
     price = models.PositiveBigIntegerField(verbose_name="Stadion narxi", default=0)
@@ -22,6 +24,8 @@ class Stadion(models.Model):
     address = models.CharField(max_length=300, null=True, blank=True)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
+    viloyat = models.ForeignKey(Viloyat, on_delete=models.SET_NULL, blank=True, null=True)
+    tuman = models.ForeignKey(Tuman, on_delete=models.SET_NULL, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     kiyinish_xonasi = models.BooleanField(default=False)

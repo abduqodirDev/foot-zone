@@ -14,3 +14,6 @@ class StartsAdmin(admin.ModelAdmin):
     list_display = ('id', 'rank', 'stadion', 'user')
     list_filter = ('rank', 'stadion', 'user')
     search_fields = ('id', )
+
+
+

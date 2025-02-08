@@ -36,6 +36,7 @@ LOCAL_APPS = [
     'common',
     'stadion',
     'users',
+    'utils',
 ]
 
 THIRD_PARTY_APPS = [

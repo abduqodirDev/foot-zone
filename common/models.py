@@ -17,6 +17,7 @@ class BaseModel(models.Model):
 
 
 class LikedStadion(models.Model):
+
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='UserLikedStadion')
     stadion = models.ForeignKey(Stadion, on_delete=models.CASCADE, related_name='StadionLikedStadion')
 
