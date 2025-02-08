@@ -4,8 +4,7 @@ from stadion.views import StadionListAPIView, DetailStadionAPIView, AddStadionAP
     StadionImageAPIView, StadionReviewAPIView, AdminStadionListAPIView, AdminStadionUpdateAPIView, \
     AdminStadionDeleteAPIView, StadionStatistikaKunAPIView, StadionStatistikaOyAPIView, StadionStatistikaYilAPIView, \
     StadionStatistikaUmumAPIView, StadionStatistikaKunlarAPIView, StadionEditPriceAPIView, StadionImagesAPIView, \
-    StadionImagesDeleteAPIView, StadionImagesAddAPIView, StadionStatistikaAllKunAPIView, StadionStatistikaAllOyAPIView, \
-    StadionStatistikaAllYilAPIView, StadionStatistikaAllKunlarAPIView
+    StadionImagesDeleteAPIView, StadionImagesAddAPIView
 
 app_name="stadion"
 urlpatterns = [
@@ -25,11 +24,6 @@ urlpatterns = [
     path('statistika-yil/', StadionStatistikaYilAPIView.as_view(), name='statistika-yil'),
     path('statistika-umum/', StadionStatistikaUmumAPIView.as_view(), name='statistika-umum'),
     path('statistika-kunlar/', StadionStatistikaKunlarAPIView.as_view(), name='statistika-kunlar'),
-
-    path('statistika-all-kun/', StadionStatistikaAllKunAPIView.as_view(), name='statistika-all-kun'),
-    path('statistika-all-oy/', StadionStatistikaAllOyAPIView.as_view(), name='statistika-all-oy'),
-    path('statistika-all-yil/', StadionStatistikaAllYilAPIView.as_view(), name='statistika-all-yil'),
-    path('statistika-all-kunlar/', StadionStatistikaAllKunlarAPIView.as_view(), name='statistika-all-kunlar'),
 
     path('edit-price/<int:id>/', StadionEditPriceAPIView.as_view(), name='edit-price'),
 
