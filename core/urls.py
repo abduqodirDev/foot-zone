@@ -12,6 +12,7 @@ urlpatterns = [
     path('order/', include('order.urls')),
     path('user/', include('users.urls')),
     path('common/', include('common.urls')),
+    path('utils/', include('utils.urls')),
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
 ] + debug_toolbar_urls()

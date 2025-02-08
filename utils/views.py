@@ -1,3 +1,8 @@
-from django.shortcuts import render
+from rest_framework import generics
+from .models import Viloyat
+from .serializerz import ViloyatSerializer
 
-# Create your views here.
+
+class ViloyatListAPIView(generics.ListAPIView):
+    queryset = Viloyat.objects.prefetch_related('tumanlar').all()
+    serializer_class = ViloyatSerializer
