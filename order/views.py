@@ -99,7 +99,7 @@ class BronStadionAPIView(APIView):
                 bron = BronStadion.objects.create(user=request.user, stadion=stadion, time=time, date=date)
                 bron_id.append(bron.id)
 
-            send_bron_sms(bron_id)
+            # send_bron_sms(bron_id)
 
             context = {
                 "status": True,
