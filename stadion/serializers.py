@@ -24,9 +24,11 @@ class StadionUserSerializer(serializers.ModelSerializer):
 
 class StadionSerializer(serializers.ModelSerializer):
     star = serializers.SerializerMethodField("get_star")
+    viloyat = serializers.StringRelatedField()
+    tuman = serializers.StringRelatedField()
     class Meta:
         model = Stadion
-        fields = ['id', 'title', 'price', 'address', 'photo', 'star']
+        fields = ['id', 'title', 'price', 'address', 'photo', 'star', 'viloyat', 'tuman']
 
     def get_star(self, obj):
         count = 0
@@ -41,6 +43,8 @@ class StadionSerializer(serializers.ModelSerializer):
 class StadionDetailSerializer(serializers.ModelSerializer):
     user = StadionUserSerializer()
     star = serializers.SerializerMethodField("get_star")
+    viloyat = serializers.StringRelatedField()
+    tuman = serializers.StringRelatedField()
     class Meta:
         model = Stadion
         fields = "__all__"
