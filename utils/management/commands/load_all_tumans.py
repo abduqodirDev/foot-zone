@@ -15,8 +15,9 @@ class Command(BaseCommand):
                 countries = json.load(f)
                 regions = countries['districts']
                 for country in regions:
-                    viloyat_id = country['region_id'] + 13
-                    viloyat = Viloyat.objects.get(id=viloyat_id)
+                    viloyat_id = country['region_id'] - 1
+                    viloyat_name = countries['regions'][viloyat_id]['name']
+                    viloyat = Viloyat.objects.get(name=viloyat_name)
                     Tuman.objects.get_or_create(name=country['name'], viloyat=viloyat)
 
             self.stdout.write(self.style.SUCCESS("Countries loaded successfully"))

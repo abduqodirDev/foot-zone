@@ -1,12 +1,14 @@
 from django.urls import path
 
-from stadion.views import StadionListAPIView, DetailStadionAPIView, AddStadionAPIView, AllStadionMapAPIView, \
-    StadionImageAPIView, StadionReviewAPIView, AdminStadionListAPIView, AdminStadionUpdateAPIView, \
-    AdminStadionDeleteAPIView, StadionStatistikaKunAPIView, StadionStatistikaOyAPIView, StadionStatistikaYilAPIView, \
-    StadionStatistikaUmumAPIView, StadionStatistikaKunlarAPIView, StadionEditPriceAPIView, StadionImagesAPIView, \
+from stadion.views import (
+    StadionListAPIView, DetailStadionAPIView, AddStadionAPIView, AllStadionMapAPIView,
+    StadionImageAPIView, StadionReviewAPIView, AdminStadionListAPIView, AdminStadionUpdateAPIView,
+    AdminStadionDeleteAPIView, StadionStatistikaKunAPIView, StadionStatistikaOyAPIView, StadionStatistikaYilAPIView,
+    StadionStatistikaUmumAPIView, StadionStatistikaKunlarAPIView, StadionEditPriceAPIView, StadionImagesAPIView,
     StadionImagesDeleteAPIView, StadionImagesAddAPIView
+)
 
-app_name="stadion"
+app_name = "stadion"
 urlpatterns = [
     path('all-stadion/', StadionListAPIView.as_view(), name='all-stadion'),
     path('all-map/', AllStadionMapAPIView.as_view(), name='all-map'),

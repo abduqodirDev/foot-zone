@@ -70,7 +70,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -184,7 +183,7 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
-OTP_TIME = 5
+OTP_TIME = 2
 
 INTERNAL_IPS = [
     "127.0.0.1",  # Lokal ish uchun
@@ -241,17 +240,13 @@ JAZZMIN_SETTINGS = {
     "site_icon": None,
     "welcome_sign": "StadionTop admin sahifasi",
     "copyright": "StadionTop",
-    # "search_model": ["auth.User"],
-    # "user_avatar": "images/logo_1.svg",
     "topmenu_links": [
 
         {"name": "Home",  "url": "admin:index", "permissions": ["auth.view_user"]},
-        # {"name": "Support", "url": "https://github.com/farridav/django-jazzmin/issues", "new_window": True},
         {"model": "auth.User"},
         {"app": "books"},
     ],
     "usermenu_links": [
-        # {"name": "Support", "url": "https://github.com/farridav/django-jazzmin/issues", "new_window": True},
         {"model": "auth.user"}
     ],
 

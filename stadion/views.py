@@ -23,7 +23,6 @@ class StadionListAPIView(ListAPIView):
 
     def get_queryset(self):
         tuman = self.request.query_params.get('tuman', None)
-        # query = self.queryset.all()
         if tuman:
             return self.queryset.all().filter(tuman__id=tuman)
         return self.queryset.all()
