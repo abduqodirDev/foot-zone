@@ -292,3 +292,5 @@ JAZZMIN_SETTINGS = {
     "changeform_format_overrides": {"auth.user": "collapsible", "auth.group": "vertical_tabs"},
     "language_chooser": False,
 }
+
+CELERY_BROKER_URL = "pyamqp://guest@localhost//"
