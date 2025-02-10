@@ -133,3 +133,22 @@ class StadionImagesAddSerializer(serializers.ModelSerializer):
         fields = ('image', )
 
 
+class StadionImageUploadSerializer(serializers.Serializer):
+    stadion_id = serializers.IntegerField()
+    images = serializers.ListField(child=serializers.ImageField(), max_length=5)
+
+    def validate(self, data):
+        stadion = Stadion.objects.get(id=data["stadion_id"])
+        if stadion.images.count() + len(data["images"]) > 5:
+            raise serializers.ValidationError("5 tadan ortiq rasm qo‘sha olmaysiz")
+        return data
+
+    def create(self, validated_data):
+        stadion = Stadion.objects.get(id=validated_data["stadion_id"])
+        images = validated_data["images"]
+
+        stadion_images = [Images(stadion=stadion, image=image) for image in images]
+        Images.objects.bulk_create(stadion_images)
+
+        return stadion_images
+

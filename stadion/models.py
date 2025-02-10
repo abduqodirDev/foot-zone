@@ -64,7 +64,7 @@ class Images(models.Model):
         return f"{self.id} : {self.stadion.title}"
 
     def save(self, *args, **kwargs):
-        if self.stadion.images.count() >= 5:
+        if self.stadion.images.count() > 5:
             raise ValidationError(detail="5 tadan ortiq rasm qo'sha ololmaysiz")
 
         super().save(*args, **kwargs)

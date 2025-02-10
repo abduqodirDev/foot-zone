@@ -13,7 +13,8 @@ from order.utils import format_time
 from stadion.models import Stadion, StadionReview, Images, StadionPrice
 from stadion.serializers import StadionSerializer, StadionDetailSerializer, StadionAddSerializer, \
     AllStadionMapSerializer, StadionImageSerializer, StadionReviewSerializer, StadionAddReviewSerializer, \
-    ImageSerializer, StadionEditPriceSerializer, StadionImagesSerializer, StadionImagesAddSerializer
+    ImageSerializer, StadionEditPriceSerializer, StadionImagesSerializer, StadionImagesAddSerializer, \
+    StadionImageUploadSerializer
 from users.permissions import StadionAdminPermission
 
 
@@ -666,3 +667,20 @@ class StadionImagesAddAPIView(CreateAPIView):
     def perform_create(self, serializer):
         id = self.kwargs.get('id')
         serializer.save(stadion_id=id)
+
+
+class StadionImagesAllAPIView(APIView):
+    permission_classes = [StadionAdminPermission]
+    def post(self, request, *args, **kwargs):
+        serializer = StadionImageUploadSerializer(data=request.data)
+
+        if serializer.is_valid():
+            stadion_id = serializer.validated_data['stadion_id']
+            stadion = Stadion.objects.get(id=stadion_id)
+            if request.user != stadion.user:
+                return Response({"message": "Error"}, status=status.HTTP_400_BAD_REQUEST)
+
+            serializer.save()
+
+            return Response({"message": "Rasmlar muvaffaqiyatli qo‘shildi"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
