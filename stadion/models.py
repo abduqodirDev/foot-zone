@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import FileExtensionValidator
 from django.utils.html import format_html
+from rest_framework.exceptions import ValidationError
 
 from utils.models import Viloyat, Tuman
 from users.models import User
@@ -61,6 +62,12 @@ class Images(models.Model):
 
     def __str__(self):
         return f"{self.id} : {self.stadion.title}"
+
+    def save(self, *args, **kwargs):
+        if self.stadion.images.count() >= 5:
+            raise ValidationError(detail="5 tadan ortiq rasm qo'sha ololmaysiz")
+
+        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = "image"

@@ -1030,7 +1030,7 @@
         },
         {
             "id":209,
-            "region_id":1,
+            "region_id":5,
             "name":"Taxiatosh shahri"
         },
         {
@@ -1060,7 +1060,7 @@
         },
         {
             "id":216,
-            "region_id":1,
+            "region_id":5,
             "name":"Bo'zatov tumani"
         },
         {
@@ -1070,7 +1070,7 @@
         },
         {
             "id":218,
-            "region_id":5,
+            "region_id":1,
             "name":"Ko'kdala tumani"
         }
     ],
