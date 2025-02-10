@@ -2,7 +2,7 @@
     "regions":[
         {
             "id":1,
-            "name":"Qoraqalpog‘iston Respublikasi"
+            "name":"Qashqadaryo viloyati"
         },
         {
             "id":2,
@@ -18,7 +18,7 @@
         },
         {
             "id":5,
-            "name":"Qashqadaryo viloyati"
+            "name":"Qoraqalpog‘iston Respublikasi"
         },
         {
             "id":6,
@@ -60,77 +60,77 @@
     "districts":[
         {
             "id":15,
-            "region_id":1,
+            "region_id":5,
             "name":"Amudaryo tumani"
         },
         {
             "id":16,
-            "region_id":1,
+            "region_id":5,
             "name":"Beruniy tumani"
         },
         {
             "id":17,
-            "region_id":1,
+            "region_id":5,
             "name":"Kegayli tumani"
         },
         {
             "id":18,
-            "region_id":1,
+            "region_id":5,
             "name":"Qonliko‘l tumani"
         },
         {
             "id":19,
-            "region_id":1,
+            "region_id":5,
             "name":"Qorao‘zak tumani"
         },
         {
             "id":20,
-            "region_id":1,
+            "region_id":5,
             "name":"Qo‘ng‘irot tumani"
         },
         {
             "id":21,
-            "region_id":1,
+            "region_id":5,
             "name":"Mo‘ynoq tumani"
         },
         {
             "id":22,
-            "region_id":1,
+            "region_id":5,
             "name":"Nukus tumani"
         },
         {
             "id":23,
-            "region_id":1,
+            "region_id":5,
             "name":"Nukus shahri"
         },
         {
             "id":24,
-            "region_id":1,
+            "region_id":5,
             "name":"Taxtako‘pir tumani"
         },
         {
             "id":25,
-            "region_id":1,
+            "region_id":5,
             "name":"To‘rtko‘l tumani"
         },
         {
             "id":26,
-            "region_id":1,
+            "region_id":5,
             "name":"Xo‘jayli tumani"
         },
         {
             "id":27,
-            "region_id":1,
+            "region_id":5,
             "name":"CHimboy tumani"
         },
         {
             "id":28,
-            "region_id":1,
+            "region_id":5,
             "name":"SHumanay tumani"
         },
         {
             "id":29,
-            "region_id":1,
+            "region_id":5,
             "name":"Ellikqal‘a tumani"
         },
         {
@@ -350,72 +350,72 @@
         },
         {
             "id":73,
-            "region_id":5,
-            "name":"G‘uzor tumani"
+            "region_id":1,
+            "name":"Qarshi shahri"
         },
         {
             "id":74,
-            "region_id":5,
-            "name":"Dehqonobod tumani"
+            "region_id":1,
+            "name":"Qarshi tumani"
         },
         {
             "id":75,
-            "region_id":5,
+            "region_id":1,
             "name":"Qamashi tumani"
         },
         {
             "id":76,
-            "region_id":5,
-            "name":"Qarshi tumani"
+            "region_id":1,
+            "name":"Dehqonobod tumani"
         },
         {
             "id":77,
-            "region_id":5,
-            "name":"Qarshi shahri"
+            "region_id":1,
+            "name":"G'uzor tumani"
         },
         {
             "id":78,
-            "region_id":5,
+            "region_id":1,
             "name":"Kasbi tumani"
         },
         {
             "id":79,
-            "region_id":5,
+            "region_id":1,
             "name":"Kitob tumani"
         },
         {
             "id":80,
-            "region_id":5,
+            "region_id":1,
             "name":"Koson tumani"
         },
         {
             "id":81,
-            "region_id":5,
+            "region_id":1,
             "name":"Mirishkor tumani"
         },
         {
             "id":82,
-            "region_id":5,
+            "region_id":1,
             "name":"Muborak tumani"
         },
         {
             "id":83,
-            "region_id":5,
+            "region_id":1,
             "name":"Nishon tumani"
         },
         {
             "id":84,
-            "region_id":5,
+            "region_id":1,
             "name":"Chiroqchi tumani"
         },
         {
             "id":85,
-            "region_id":5,
+            "region_id":1,
             "name":"Shahrisabz tumani"
         },
         {
             "id":86,
-            "region_id":5,
+            "region_id":1,
             "name":"Yakkabog‘ tumani"
         },
         {
