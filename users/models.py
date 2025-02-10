@@ -62,7 +62,8 @@ class PhoneNumber(models.Model):
         return self.phone_number
 
     def save(self, *args, **kwargs):
-        if PhoneNumber.objects.count() >= 3:
+        phone_number = PhoneNumber.objects.filter(user=self.user)
+        if len(phone_number) >= 3:
             raise ValidationError("Siz faqat 3 ta nomer qo‘shishingiz mumkin.")
 
         super().save(*args, **kwargs)
