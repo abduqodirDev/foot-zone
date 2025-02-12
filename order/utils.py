@@ -45,7 +45,7 @@ def send_bron_sms(bron_id):
         date = bron.date
         time = format_time(bron.time)
 
-        message = f"{client_phone_number} telefon raqami sizning {stadion} stadiongizni {date} sana {time} vaqtda bron qildi, iltimos saytga kirib uni tandiqlang"
+        message = f"{client_phone_number} telefon raqami sizning {stadion} stadiongizni {date} sana {time} vaqtda stadioningiz bron qilindi"
         user = bron.stadion.user
         phone_numbers = set()
         phone = user.phone_number
