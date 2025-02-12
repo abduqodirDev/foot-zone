@@ -139,10 +139,13 @@ class VerifyOtpAPIView(APIView):
                 action_status = 'register'
                 user.is_active = True
                 user.save()
+                refresh = RefreshToken.for_user(user)
                 context = {
                     'status': True,
                     'action_status': action_status,
-                    'user_id': user.id
+                    'user_id': user.id,
+                    'access': str(refresh.access_token),
+                    'refresh': str(refresh)
                 }
                 return Response(context, status=status.HTTP_200_OK)
 
