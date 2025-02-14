@@ -54,6 +54,9 @@ class StadionImageAPIView(ListAPIView):
     serializer_class = StadionImageSerializer
     queryset = Stadion.objects.all()
 
+    def get_queryset(self):
+        return self.queryset.filter(is_active=True)
+
 
 class StadionReviewAPIView(ListAPIView):
     queryset = StadionReview.objects.all()
