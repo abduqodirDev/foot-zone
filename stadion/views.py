@@ -1,6 +1,7 @@
 import calendar
 from datetime import timedelta, datetime
 
+from django.db.models import Avg
 from rest_framework import status
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView, \
     DestroyAPIView
@@ -22,12 +23,27 @@ class StadionListAPIView(ListAPIView):
     queryset = Stadion.objects.all()
     serializer_class = StadionSerializer
 
+    # def get_queryset(self):
+    #     tuman = self.request.query_params.get('tuman', None)
+    #     queryset = self.queryset.filter(is_active=True).select_related('tuman')
+    #
+    #     if tuman:
+    #         queryset = queryset.filter(tuman__id=tuman)
+    #
+    #     return queryset
+
+    from django.db.models import Avg
+
     def get_queryset(self):
         tuman = self.request.query_params.get('tuman', None)
-        if tuman:
-            return self.queryset.all().filter(tuman__id=tuman, is_active=True)
-        return self.queryset.filter(is_active=True)
 
+        queryset = self.queryset.filter(is_active=True).select_related('tuman', 'viloyat').prefetch_related(
+            'StadionStarts')
+
+        if tuman:
+            queryset = queryset.filter(tuman__id=tuman)
+
+        return queryset.annotate(star_avg=Avg('StadionStarts__rank'))
 
 
 class DetailStadionAPIView(RetrieveAPIView):

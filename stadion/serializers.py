@@ -23,21 +23,22 @@ class StadionUserSerializer(serializers.ModelSerializer):
 
 
 class StadionSerializer(serializers.ModelSerializer):
-    star = serializers.SerializerMethodField("get_star")
+    star = serializers.FloatField(source='star_avg', read_only=True)
+    # star = serializers.SerializerMethodField("get_star")
     viloyat = serializers.StringRelatedField()
     tuman = serializers.StringRelatedField()
     class Meta:
         model = Stadion
         fields = ['id', 'title', 'price', 'address', 'photo', 'star', 'viloyat', 'tuman']
 
-    def get_star(self, obj):
-        count = 0
-        starts = obj.StadionStarts.all()
-        if len(starts) == 0:
-            return 0
-        for star in starts:
-            count += star.rank
-        return round(count / len(starts), 2)
+    # def get_star(self, obj):
+    #     count = 0
+    #     starts = obj.StadionStarts.all()
+    #     if len(starts) == 0:
+    #         return 0
+    #     for star in starts:
+    #         count += star.rank
+    #     return round(count / len(starts), 2)
 
 
 class StadionDetailSerializer(serializers.ModelSerializer):
