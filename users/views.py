@@ -126,6 +126,8 @@ class VerifyOtpAPIView(APIView):
 
             if user.is_active:
                 action_status = 'login'
+                user.is_active = True
+                user.save()
                 refresh = RefreshToken.for_user(user)
                 context = {
                     'status': True,
