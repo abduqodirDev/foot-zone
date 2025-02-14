@@ -661,17 +661,6 @@ class StadionImagesDeleteAPIView(APIView):
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
 
-class StadionImagesAddAPIView(CreateAPIView):
-    serializer_class = StadionImagesAddSerializer
-    queryset = Images.objects.all()
-    permission_classes = [IsAuthenticated]
-    http_method_names = ['post']
-
-    def perform_create(self, serializer):
-        id = self.kwargs.get('id')
-        serializer.save(stadion_id=id)
-
-
 class StadionImagesAllAPIView(APIView):
     permission_classes = [StadionAdminPermission]
     def post(self, request, *args, **kwargs):
