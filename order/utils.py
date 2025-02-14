@@ -42,10 +42,10 @@ def send_bron_sms(bron_id):
         bron = BronStadion.objects.filter(id=id).first()
         client_phone_number = bron.user.phone_number
         stadion = bron.stadion.title
-        date = bron.date
+        date = bron.date.strftime('%d.%m.%Y')
         time = format_time(bron.time)
 
-        message = f"{client_phone_number} telefon raqami sizning {stadion} stadiongizni {date} sana {time} vaqtda bron qilindi"
+        message = f"{client_phone_number} telefon raqami sizning {stadion} stadiongizni {date} sana {time} vaqtda bron qildi, iltimos saytga kirib uni tasdiqlang"
         user = bron.stadion.user
         phone_numbers = set()
         phone = user.phone_number

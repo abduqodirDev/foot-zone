@@ -49,7 +49,7 @@ class LoginAPIView(APIView):
                 context = {
                     'status': True,
                     'message': 'code yuborildi',
-                    # 'action_status': 'login',
+                    'action_status': 'login',
                     'user_id': user.id,
                     'expire_time': OTP_TIME
                 }
@@ -74,7 +74,7 @@ class LoginAPIView(APIView):
             context = {
                 'status': True,
                 'message': 'code yuborildi',
-                # 'action_status': 'register',
+                'action_status': 'register',
                 'user_id': user.id,
                 'expire_time': OTP_TIME
             }
@@ -124,32 +124,32 @@ class VerifyOtpAPIView(APIView):
             verify.is_confirmed = True
             verify.save()
 
-            # if user.is_active:
-                # action_status = 'login'
-            user.is_active = True
-            user.save()
-            refresh = RefreshToken.for_user(user)
-            context = {
-                'status': True,
-                # 'action_status': action_status,
-                'user_id': user.id,
-                'access': str(refresh.access_token),
-                'refresh': str(refresh)
-            }
-            return Response(context, status=status.HTTP_200_OK)
-            # else:
-                # action_status = 'register'
-                # user.is_active = True
-                # user.save()
-                # refresh = RefreshToken.for_user(user)
-                # context = {
-                #     'status': True,
-                #     # 'action_status': action_status,
-                #     'user_id': user.id,
-                #     'access': str(refresh.access_token),
-                #     'refresh': str(refresh)
-                # }
-                # return Response(context, status=status.HTTP_200_OK)
+            if user.is_active:
+                action_status = 'login'
+                user.is_active = True
+                user.save()
+                refresh = RefreshToken.for_user(user)
+                context = {
+                    'status': True,
+                    'action_status': action_status,
+                    'user_id': user.id,
+                    'access': str(refresh.access_token),
+                    'refresh': str(refresh)
+                }
+                return Response(context, status=status.HTTP_200_OK)
+            else:
+                action_status = 'register'
+                user.is_active = True
+                user.save()
+                refresh = RefreshToken.for_user(user)
+                context = {
+                    'status': True,
+                    'action_status': action_status,
+                    'user_id': user.id,
+                    'access': str(refresh.access_token),
+                    'refresh': str(refresh)
+                }
+                return Response(context, status=status.HTTP_200_OK)
 
 
         except User.DoesNotExist:
