@@ -16,7 +16,7 @@ class PriceInline(admin.TabularInline):
 @admin.register(Stadion)
 class StadionAdmin(admin.ModelAdmin):
     inlines = [ImagesInline, PriceInline]
-    list_display = ['title', 'price', 'user', 'photo']
+    list_display = ['title', 'price', 'user', 'photo', 'is_active']
     list_filter = ['user']
     search_fields = ['title']
 
