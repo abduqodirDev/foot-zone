@@ -85,10 +85,11 @@ class StadionAddSerializer(serializers.ModelSerializer):
         }
 
 
-class AllStadionMapSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Stadion
-        fields = ('id', 'title', 'latitude', 'longitude')
+class AllStadionMapSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    title = serializers.CharField()
+    latitude = serializers.FloatField()
+    longitude = serializers.FloatField()
 
 
 class StadionImageSerializer(serializers.ModelSerializer):
