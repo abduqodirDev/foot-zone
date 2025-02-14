@@ -127,6 +127,12 @@ class StadionImagesSerializer(serializers.ModelSerializer):
         fields = ('id', 'image')
 
 
+class StadionImagesAddSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Images
+        fields = ('image', )
+
+
 class StadionImageUploadSerializer(serializers.Serializer):
     stadion_id = serializers.IntegerField()
     images = serializers.ListField(child=serializers.ImageField(), max_length=5)
