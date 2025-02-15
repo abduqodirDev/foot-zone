@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from order.models import BronStadion
+from order.models import BronStadion, TASDIQLANGAN
 from order.serializers import BronStadionSerializer, BronStadionPostSerializer, MyBronstadionSerializer, \
     MyStadionBronSerializer, VerifyBronSerializer
 from order.utils import send_bron_sms
@@ -73,6 +73,7 @@ class BronStadionAPIView(APIView):
             return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request, id):
+        user = request.user
         data = request.data
         serializer = BronStadionPostSerializer(data=data)
         try:
@@ -93,13 +94,20 @@ class BronStadionAPIView(APIView):
                     return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
             bron_id = []
-            for dict in data['brons']:
-                time = dict['bron']
-                date = dict['date']
-                bron = BronStadion.objects.create(user=request.user, stadion=stadion, time=time, date=date)
-                bron_id.append(bron.id)
+            if stadion.user == user:
+                for dict in data['brons']:
+                    time = dict['bron']
+                    date = dict['date']
+                    bron = BronStadion.objects.create(user=user, stadion=stadion, time=time, date=date, status=TASDIQLANGAN)
+                    bron_id.append(bron.id)
+            else:
+                for dict in data['brons']:
+                    time = dict['bron']
+                    date = dict['date']
+                    bron = BronStadion.objects.create(user=user, stadion=stadion, time=time, date=date)
+                    bron_id.append(bron.id)
 
-            send_bron_sms(bron_id)
+                send_bron_sms(bron_id)
 
             context = {
                 "status": True,
@@ -128,6 +136,7 @@ class BronStadionAPIView(APIView):
             return [AllowAny()]
         else:
             return [IsAuthenticated()]
+
 
 class MyBronStadion(ListAPIView):
     serializer_class = MyBronstadionSerializer
