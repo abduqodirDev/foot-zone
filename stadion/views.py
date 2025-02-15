@@ -465,7 +465,6 @@ class StadionStatistikaUmumAPIView(APIView):
         price = 0
         context = {}
         stadions = user.stadions.all()
-        context['stadion_count'] = len(stadions)
         for stadion in stadions:
             just = 0
             prices = stadion.prices.all()
@@ -474,6 +473,7 @@ class StadionStatistikaUmumAPIView(APIView):
                 just += prices.get(time=bron.time).price
             bron_count += len(brons)
             price += just
+        context['stadion_count'] = len(stadions)
         context['bron_count'] = bron_count
         context['price'] = price
 
@@ -532,7 +532,7 @@ class StadionStatistikaKunlarAPIView(APIView):
 
             date_from = datetime.strptime(date_from, '%Y-%m-%d').date()
             date_to = datetime.strptime(date_to, '%Y-%m-%d').date()
-            brons = BronStadion.objects.filter(stadion=stadion, date__lte=date_from, date__gte=date_to)
+            brons = BronStadion.objects.filter(stadion=stadion, date__lte=date_from, date__gte=date_to, status=TASDIQLANGAN)
             context = {}
             daromad = 0
             while date_to <= date_from:
@@ -550,13 +550,6 @@ class StadionStatistikaKunlarAPIView(APIView):
 
             context['bron_count'] = len(brons)
             context['daromad'] = daromad
-
-            # for day in range(1, days + 1):
-            #     result = {}
-            #     bron = brons.filter(date__day=day)
-            #     result['bron'] = len(bron)
-            #     result['price'] = stadion.price * len(bron)
-            #     context[str(day)] = result
 
             return Response(context)
 

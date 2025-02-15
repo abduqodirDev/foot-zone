@@ -84,8 +84,7 @@ class MyStadionBronSerializer(serializers.ModelSerializer):
         time = data.get('time', None)
         if time:
             data['time'] = format_time(time)
-        stadion_id = data.get('stadion', None)
-        data['stadion'] = Stadion.objects.get(id=stadion_id).title
+        data['stadion'] = instance.stadion.title
         return data
 
 
