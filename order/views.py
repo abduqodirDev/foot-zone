@@ -148,7 +148,7 @@ class MyStadionBronListAPIView(ListAPIView):
         stadions = Stadion.objects.filter(user=self.request.user)
         query = []
         for stadion in stadions:
-            query += self.queryset.filter(stadion=stadion, date__gte=current_time, user__isnull=False).order_by('-date')
+            query += self.queryset.filter(stadion=stadion, date__gte=current_time, user__isnull=False).order_by('-created_at')
         return query
 
 
@@ -258,5 +258,5 @@ class MyStadionHistoryBronAPIView(ListAPIView):
         stadions = Stadion.objects.filter(user=self.request.user)
         query = []
         for stadion in stadions:
-            query += self.queryset.filter(stadion=stadion, date__lte=current_time - datetime.timedelta(days=1), user__isnull=False).order_by('-date')
+            query += self.queryset.filter(stadion=stadion, date__lte=current_time - datetime.timedelta(days=1), user__isnull=False).order_by('-created_at')
         return query
