@@ -108,14 +108,11 @@ class StadionReviewSerializer(serializers.ModelSerializer):
     user = ReviewUserSerializer()
     class Meta:
         model = StadionReview
-        # fields = "__all__"
         exclude = ('stadion',)
 
 
-class StadionAddReviewSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = StadionReview
-        fields = ('comment', )
+class StadionAddReviewSerializer(serializers.Serializer):
+    comment = serializers.CharField()
 
 
 class StadionEditPriceSerializer(serializers.Serializer):
