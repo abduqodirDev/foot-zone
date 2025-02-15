@@ -40,11 +40,11 @@ class BronStadion(models.Model):
         ("B", "BEKOR_QILINGAN")
     )
 
-    stadion = models.ForeignKey(Stadion, on_delete=models.CASCADE, related_name="stadion_bronorders")
+    stadion = models.ForeignKey(Stadion, on_delete=models.CASCADE, related_name="stadion_bronorders", db_index=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_bronorders")
 
     time = models.CharField(max_length=20, choices=TIMECHOICE)
-    date = models.DateField()
+    date = models.DateField(db_index=True)
     status = models.CharField(max_length=20, choices=STATUSCHOICE, default=KUTILMOQDA)
     is_active = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)

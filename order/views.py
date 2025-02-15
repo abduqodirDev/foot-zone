@@ -214,23 +214,20 @@ class StadionBronDiagrammaAPIView(APIView):
                 }
                 return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
-            # context['start_time'] = stadion.start_time
-            # context['end_time'] = stadion.end_time
-            brons = BronStadion.objects.filter(date=date.today(), stadion=stadion)
-            context['zakazlar_soni'] = len(brons)
-            context['tasdiqlangan_bronlar'] = len(brons.filter(status='T'))
-            context['bekorqilingan_bronlar'] = len(brons.filter(status='B'))
-            context['kutilayotgan_bronlar'] = len(brons.filter(status='K'))
+            brons = BronStadion.objects.filter(stadion=stadion)
+            today_brons = brons.filter(date=date.today())
 
-            users = BronStadion.objects.filter(stadion=stadion).values_list('user', flat=True).distinct()
+            context['zakazlar_soni'] = len(today_brons)
+            context['tasdiqlangan_bronlar'] = len(today_brons.filter(status='T'))
+            context['bekorqilingan_bronlar'] = len(today_brons.filter(status='B'))
+            context['kutilayotgan_bronlar'] = len(today_brons.filter(status='K'))
+
+            users = brons.values_list('user', flat=True).distinct()
 
             just1 = list()
             for user in users:
                 user = User.objects.get(id=user)
-                just = {}
-                bron = BronStadion.objects.filter(user=user, stadion=stadion)
-                just['user'] = UserAdminInfoSerializer(user).data
-                just['bron'] = len(bron)
+                just = {'user': UserAdminInfoSerializer(user).data, 'bron': brons.filter(user=user).count()}
                 just1.append(just)
 
             context['users'] = sorted(just1, key=lambda x: x["bron"], reverse=True)
