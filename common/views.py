@@ -1,5 +1,5 @@
 from rest_framework import status
-from rest_framework.generics import ListAPIView, CreateAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView, DestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -57,50 +57,51 @@ class LikedStadionView(ListAPIView):
             }
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, *args, **kwargs):
-        serializer = LikedStadionPostSerializer(data=request.data)
-        if not serializer.is_valid():
-            context = {
-                'status': False,
-                'message': 'Invalid_data'
-            }
-            return Response(context, status=status.HTTP_400_BAD_REQUEST)
-        try:
-            data = serializer.validated_data
-            stadion_id = data.get('stadion_id', None)
-            likedstadion = LikedStadion.objects.get(id=stadion_id)
-            if likedstadion.user != request.user:
-                context = {
-                    'status': False,
-                    'message': 'Sizda huquq yo\'q'
-                }
-                return Response(context, status=status.HTTP_400_BAD_REQUEST)
-            context = {
-                'status': True,
-                'message': 'LikedStadion was deleted successfully!!!'
-            }
-            return Response(context)
-
-        except LikedStadion.DoesNotExist:
-            context = {
-                'status': False,
-                'message': 'LikedStadion topilmadi!!!'
-            }
-            return Response(context, status=status.HTTP_400_BAD_REQUEST)
-
-        except LikedStadion.DoesNotExist:
-            context = {
-                'status': False,
-                'message': 'Liked Stadion topilmadi!!!'
-            }
-            return Response(context, status=status.HTTP_400_BAD_REQUEST)
-
-        except Exception as e:
-            context = {
-                'status': False,
-                'message': str(e)
-            }
-            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+    # def delete(self, request, id, *args, **kwargs):
+    #     # serializer = LikedStadionPostSerializer(data=request.data)
+    #     # if not serializer.is_valid():
+    #     #     context = {
+    #     #         'status': False,
+    #     #         'message': 'Invalid_data'
+    #     #     }
+    #     #     return Response(context, status=status.HTTP_400_BAD_REQUEST)
+    #     try:
+    #         # data = serializer.validated_data
+    #         stadion_id = id
+    #         # stadion_id = data.get('stadion_id', None)
+    #         likedstadion = LikedStadion.objects.get(id=stadion_id)
+    #         if likedstadion.user != request.user:
+    #             context = {
+    #                 'status': False,
+    #                 'message': 'Sizda huquq yo\'q'
+    #             }
+    #             return Response(context, status=status.HTTP_400_BAD_REQUEST)
+    #         context = {
+    #             'status': True,
+    #             'message': 'LikedStadion was deleted successfully!!!'
+    #         }
+    #         return Response(context)
+    #
+    #     except LikedStadion.DoesNotExist:
+    #         context = {
+    #             'status': False,
+    #             'message': 'LikedStadion topilmadi!!!'
+    #         }
+    #         return Response(context, status=status.HTTP_400_BAD_REQUEST)
+    #
+    #     except LikedStadion.DoesNotExist:
+    #         context = {
+    #             'status': False,
+    #             'message': 'Liked Stadion topilmadi!!!'
+    #         }
+    #         return Response(context, status=status.HTTP_400_BAD_REQUEST)
+    #
+    #     except Exception as e:
+    #         context = {
+    #             'status': False,
+    #             'message': str(e)
+    #         }
+    #         return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
 
 class StartsPostAPIView(CreateAPIView):
@@ -110,3 +111,13 @@ class StartsPostAPIView(CreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+class DeleteLikedStadionView(DestroyAPIView):
+    queryset = LikedStadion.objects.all()
+    lookup_url_kwarg = id
+
+    def get_object(self):
+        id = self.kwargs.get('id')
+        return self.queryset.all().get(id=id)
+

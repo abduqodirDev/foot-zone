@@ -26,6 +26,8 @@ class Stadion(models.Model):
     longitude = models.FloatField(null=True, blank=True)
     viloyat = models.ForeignKey(Viloyat, on_delete=models.SET_NULL, blank=True, null=True)
     tuman = models.ForeignKey(Tuman, on_delete=models.SET_NULL, blank=True, null=True)
+    start_time = models.CharField(max_length=2, null=True, blank=True)
+    end_time = models.CharField(max_length=2, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
