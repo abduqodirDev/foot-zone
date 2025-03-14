@@ -3,7 +3,7 @@ from datetime import datetime
 
 from rest_framework import status
 from rest_framework.generics import RetrieveUpdateAPIView, ListCreateAPIView, DestroyAPIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -13,7 +13,7 @@ from users.models import User, VerificationOtp, PhoneNumber
 from users.permissions import StadionAdminPermission
 from users.serializers import LoginSerializer, VerifyOtpSerializer, PostUserInfoSerializer, \
     UserLoginSerializer, UserRegisterSerializer, UserAdminInfoSerializer, VerifyResetPhoneNumberSerializer, \
-    PhoneNumberSerializer
+    PhoneNumberSerializer, RefreshTokenSerializer
 from users.utils import send_sms
 from users.validators import create_otp_code
 
@@ -503,3 +503,24 @@ class StadionAdminPhoneDeleteAPIView(DestroyAPIView):
     queryset = PhoneNumber.objects.all()
     serializer_class = PhoneNumberSerializer
 
+
+class RefreshTokenView(APIView):
+    permission_classes = [AllowAny]
+    serializer_class = RefreshTokenSerializer
+
+    def post(self, request):
+        serializer = RefreshTokenSerializer(data=request.data)
+        if not serializer.is_valid():
+            context = {
+                "status": False,
+                "message": "Invalid data"
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+        refresh_token = serializer.data.get('refresh')
+
+        try:
+            refresh = RefreshToken(refresh_token)
+            access_token = str(refresh.access_token)
+            return Response({"access": access_token}, status=status.HTTP_200_OK)
+        except Exception:
+            return Response({"error": "Invalid refresh token"}, status=status.HTTP_400_BAD_REQUEST)

@@ -3,7 +3,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 from users.views import LoginAPIView, VerifyOtpAPIView, PostUserInfoAPIView, UserInfoAPIView, UserLoginAPIView, \
     UserRegisterAPIView, ResendSmsAPIView, ResetPhoneNumberAPIView, VerifyResetPhoneNumberAPIView, \
-    StadionAdminPhoneAPIView, StadionAdminPhoneDeleteAPIView
+    StadionAdminPhoneAPIView, StadionAdminPhoneDeleteAPIView, RefreshTokenView
 
 app_name = 'users'
 urlpatterns = [
@@ -17,6 +17,7 @@ urlpatterns = [
 
     path('user-info/', UserInfoAPIView.as_view(), name='user-info'),
     path('token/', TokenObtainPairView.as_view(), name='token'),
+    path('token/refresh/', RefreshTokenView.as_view(), name='refresh-token-view'),
 
     path('logiin/', UserLoginAPIView.as_view(), name='logiin'),
     path('register/', UserRegisterAPIView.as_view(), name='register'),

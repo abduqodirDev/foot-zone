@@ -105,3 +105,7 @@ class PhoneNumberSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             "user": {"required": False}
         }
+
+
+class RefreshTokenSerializer(serializers.Serializer):
+    refresh = serializers.CharField(required=True)
