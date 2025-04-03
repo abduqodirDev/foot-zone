@@ -144,7 +144,7 @@ class MyBronStadion(ListAPIView):
     permission_classes = [IsAuthenticated,]
 
     def get_queryset(self):
-        return self.queryset.filter(user=self.request.user)
+        return self.queryset.filter(user=self.request.user).order_by('-created_at')
 
 
 class MyStadionBronListAPIView(ListAPIView):
