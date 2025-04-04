@@ -109,6 +109,7 @@ class StadionPrice(models.Model):
     time = models.CharField(max_length=2, choices=TIMES)
     price = models.PositiveIntegerField(default=0)
     stadion = models.ForeignKey(Stadion, on_delete=models.CASCADE, related_name='prices')
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.time} for {self.stadion}"

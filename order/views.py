@@ -47,8 +47,10 @@ class BronStadionAPIView(APIView):
                 p = prices.filter(time=str(n))
                 if p:
                     just1['price'] = p.first().price
+                    just1['is_active'] = p.first().is_active
                 else:
                     just1['price'] = stadion.price
+                    just1['is_active'] = True
                 price.append(just1)
 
             data = {
