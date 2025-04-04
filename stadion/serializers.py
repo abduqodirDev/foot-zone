@@ -120,6 +120,10 @@ class StadionEditPriceSerializer(serializers.Serializer):
     price = serializers.IntegerField(required=True, min_value=0)
 
 
+class StadionTimeActiveSerializer(serializers.Serializer):
+    time = serializers.IntegerField(required=True, min_value=0, max_value=23)
+
+
 class StadionImagesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Images

@@ -15,7 +15,7 @@ from stadion.models import Stadion, StadionReview, Images, StadionPrice
 from stadion.serializers import StadionSerializer, StadionDetailSerializer, StadionAddSerializer, \
     AllStadionMapSerializer, StadionImageSerializer, StadionReviewSerializer, StadionAddReviewSerializer, \
     ImageSerializer, StadionEditPriceSerializer, StadionImagesSerializer, StadionImagesAddSerializer, \
-    StadionImageUploadSerializer
+    StadionImageUploadSerializer, StadionTimeActiveSerializer
 from users.permissions import StadionAdminPermission
 
 
@@ -620,6 +620,61 @@ class StadionEditPriceAPIView(APIView):
                 'message': str(e)
             }
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+
+class StadionTimeActiveAPIView(APIView):
+    http_method_names = ['post']
+    permission_classes = [IsAuthenticated]
+    serializer_class = StadionTimeActiveSerializer
+
+    def post(self, request, id):
+        user = request.user
+        try:
+            stadion = Stadion.objects.get(id=id)
+            prices = stadion.prices.all()
+            serializer = StadionTimeActiveSerializer(data=request.data)
+            if stadion.user != user:
+                context = {
+                    'status': False,
+                    'message': 'Error'
+                }
+                return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+            if not serializer.is_valid():
+                context = {
+                    'status': False,
+                    'message': 'Invalid_data'
+                }
+                return Response(context, status=status.HTTP_400_BAD_REQUEST)
+            data = serializer.validated_data
+            time = data.get('time')
+            Price = prices.filter(time=time).first()
+            if Price.is_active:
+                Price.is_active = False
+            else:
+                Price.is_active = True
+                # StadionPrice.objects.create(stadion=stadion, time=time, price=stadion.price)
+            Price.save()
+            context = {
+                'success': True,
+                'message': 'Updated',
+                f"{time}": Price.is_active
+            }
+            return Response(context)
+
+        except Stadion.DoesNotExist:
+            context = {
+                'status': False,
+                'message': 'Stadion not found'
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+        # except Exception as e:
+        #     context = {
+        #         'status': False,
+        #         'message': str(e)
+        #     }
+        #     return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
 
 class StadionImagesAPIView(ListAPIView):
