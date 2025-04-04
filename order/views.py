@@ -98,7 +98,7 @@ class BronStadionAPIView(APIView):
                 for dict in data['brons']:
                     time = dict['bron']
                     date = dict['date']
-                    bron = BronStadion.objects.create(user=user, stadion=stadion, time=time, date=date, status=TASDIQLANGAN)
+                    bron = BronStadion.objects.create(user=user, stadion=stadion, time=time, date=date, status=TASDIQLANGAN, is_active=True)
                     bron_id.append(bron.id)
             else:
                 for dict in data['brons']:
