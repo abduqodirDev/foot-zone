@@ -17,7 +17,7 @@ class UserInfoSerializer(serializers.ModelSerializer):
 class BronStadionSerializer(serializers.ModelSerializer):
     class Meta:
         model = BronStadion
-        fields = ('id', 'time') # date olib tashlandi
+        fields = ('id', 'time', 'status') # date olib tashlandi
 
     def to_representation(self, instance):
         data = super(BronStadionSerializer, self).to_representation(instance)
