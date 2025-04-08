@@ -63,15 +63,12 @@ class AddStadionAPIView(CreateAPIView):
 
 class AllStadionMapAPIView(ListAPIView):
     serializer_class = AllStadionMapSerializer
-    queryset = Stadion.objects.all()
+    queryset = Stadion.objects.filter(is_active=True)
 
 
 class StadionImageAPIView(ListAPIView):
     serializer_class = StadionImageSerializer
-    queryset = Stadion.objects.all()
-
-    def get_queryset(self):
-        return self.queryset.filter(is_active=True)
+    queryset = Stadion.objects.filter(is_active=True)
 
 
 class StadionReviewAPIView(ListAPIView):
@@ -130,13 +127,10 @@ class StadionReviewAPIView(ListAPIView):
 
 class AdminStadionListAPIView(ListAPIView):
     serializer_class = StadionAddSerializer
-    queryset = Stadion.objects.all()
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        user = self.request.user
-
-        return self.queryset.filter(user=user)
+        return Stadion.objects.filter(user=self.request.user)
 
 
 class AdminStadionUpdateAPIView(UpdateAPIView):
