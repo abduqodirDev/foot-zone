@@ -13,8 +13,7 @@ def send_sms(phone, code):
     }
     data = {
         "mobile_phone": phone,
-        "message": message,
-        "from": "footzone"
+        "message": message
     }
     requests.post(url, headers=headers, data=data)
 

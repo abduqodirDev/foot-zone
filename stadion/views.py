@@ -569,11 +569,10 @@ class StadionStatistikaKunlarAPIView(APIView):
 
 
 class StadionEditPriceAPIView(APIView):
-    http_method_names = ['post']
     permission_classes = [IsAuthenticated]
     serializer_class = StadionEditPriceSerializer
 
-    def post(self, request, id, *args, **kwargs):
+    def post(self, request, id):
         user = request.user
         try:
             stadion = Stadion.objects.get(id=id)
@@ -582,28 +581,29 @@ class StadionEditPriceAPIView(APIView):
             if stadion.user != user:
                 context = {
                     'status': False,
-                    'message': 'Error'
+                    'message': 'you do not have an permission'
                 }
-                return Response(context, status=status.HTTP_400_BAD_REQUEST)
+                return Response(context, status=status.HTTP_403_FORBIDDEN)
 
             if not serializer.is_valid():
                 context = {
-                    'status': False,
-                    'message': 'Invalid_data'
+                    'success': False,
+                    'message': str(serializer.errors)
                 }
                 return Response(context, status=status.HTTP_400_BAD_REQUEST)
-            data = serializer.validated_data
-            time = data.get('time')
-            price = data.get('price')
+
+            time = serializer.data.get('time')
+            price = serializer.data.get('price')
             Price = prices.filter(time=time)
+
             if Price:
                 Price.update(price=price)
             else:
                 StadionPrice.objects.create(stadion=stadion, time=time, price=price)
 
             context = {
-                'status': True,
-                'message': 'Yangilandi'
+                'success': True,
+                'message': 'successfully updated'
             }
             return Response(context)
 
@@ -616,14 +616,13 @@ class StadionEditPriceAPIView(APIView):
 
         except Exception as e:
             context = {
-                'status': False,
+                'success': False,
                 'message': str(e)
             }
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
 
 class StadionTimeActiveAPIView(APIView):
-    http_method_names = ['post']
     permission_classes = [IsAuthenticated]
     serializer_class = StadionTimeActiveSerializer
 
@@ -635,46 +634,49 @@ class StadionTimeActiveAPIView(APIView):
             serializer = StadionTimeActiveSerializer(data=request.data)
             if stadion.user != user:
                 context = {
-                    'status': False,
-                    'message': 'Error'
+                    'success': False,
+                    'message': 'You have not permission'
                 }
-                return Response(context, status=status.HTTP_400_BAD_REQUEST)
+                return Response(context, status=status.HTTP_403_FORBIDDEN)
 
             if not serializer.is_valid():
                 context = {
-                    'status': False,
-                    'message': 'Invalid_data'
+                    'success': False,
+                    'message': str(serializer.errors)
                 }
                 return Response(context, status=status.HTTP_400_BAD_REQUEST)
-            data = serializer.validated_data
-            time = data.get('time')
+
+            time = serializer.data.get('time')
             Price = prices.filter(time=time).first()
-            if Price.is_active:
-                Price.is_active = False
+            if Price:
+                if Price.is_active:
+                    Price.is_active = False
+                else:
+                    Price.is_active = True
+                Price.save()
             else:
-                Price.is_active = True
-                # StadionPrice.objects.create(stadion=stadion, time=time, price=stadion.price)
-            Price.save()
+                StadionPrice.objects.create(stadion=stadion, time=time, price=stadion.price)
+
             context = {
                 'success': True,
                 'message': 'Updated',
-                f"{time}": Price.is_active
+                str(format_time(str(time))): Price.is_active
             }
             return Response(context)
 
         except Stadion.DoesNotExist:
             context = {
-                'status': False,
+                'success': False,
                 'message': 'Stadion not found'
             }
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
-        # except Exception as e:
-        #     context = {
-        #         'status': False,
-        #         'message': str(e)
-        #     }
-        #     return Response(context, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            context = {
+                'status': False,
+                'message': str(e)
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
 
 class StadionImagesAPIView(ListAPIView):

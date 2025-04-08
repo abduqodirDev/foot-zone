@@ -9,8 +9,8 @@ class LoginSerializer(serializers.Serializer):
 
     def validate_phone_number(self, data):
         context = {
-            'status': False,
-            'message': 'Invalid_data'
+            'success': False,
+            'message': 'Invalid data'
         }
         if not data.startswith('+998') or len(data) != 13 or not data[1:].isdigit():
             raise ValidationError(context)

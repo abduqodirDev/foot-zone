@@ -342,24 +342,19 @@ class ResendSmsAPIView(APIView):
         serializer = LoginSerializer(data=request.data)
         if not serializer.is_valid():
             context = {
-                'status': False,
-                'message': 'Invalid_data'
+                'success': False,
+                'message': str(serializer.errors)
             }
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
         phone_number = serializer.validated_data.get('phone_number', None)
         try:
             user = User.objects.get(phone_number=phone_number)
-            verifies = user.verificationotps.filter(user=user, expires_time__gte=datetime.now())
-            if not verifies:
+            verifies = user.verificationotps.filter(expires_time__gte=datetime.now())
+            if verifies:
                 context = {
-                    'status': False,
-                    'message': 'Error!!!'
-                }
-                return Response(context, status=status.HTTP_400_BAD_REQUEST)
-            if len(verifies) > 4:
-                context = {
-                    'status': False,
-                    'message': 'Too_many_sms_sended'
+                    'success': False,
+                    'message': "Tasdiqlash vaqti tugagandan so'ngina kodni qayta yubora olasiz"
                 }
                 return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
@@ -374,14 +369,14 @@ class ResendSmsAPIView(APIView):
 
         except User.DoesNotExist:
             context = {
-                'status': False,
-                'message': 'User_not_found'
+                'success': False,
+                'message': 'User not found'
             }
-            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+            return Response(context, status=status.HTTP_404_NOT_FOUND)
 
         except Exception as e:
             context = {
-                'status': False,
+                'success': False,
                 'message': str(e)
             }
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
