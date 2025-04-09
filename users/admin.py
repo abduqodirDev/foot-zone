@@ -7,7 +7,7 @@ from users.models import User, VerificationOtp, PhoneNumber
 
 
 @admin.register(User)
-class UserAdmin(UserAdmin):
+class UserAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {"fields": ("phone_number", "password")}),
         (_("Personal info"), {"fields": ("first_name", "last_name", "email", "role", "photo")}),
