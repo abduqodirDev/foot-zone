@@ -34,8 +34,8 @@ class UserAdmin(UserAdmin):
             },
         ),
     )
-    list_display = ("phone_number", "first_name", "last_name", "role", "is_staff", "is_active")
-    ordering = ("phone_number",)
+    list_display = ("phone_number", "role", "is_staff", "is_active")
+    ordering = ("-date_joined",)
 
 admin.site.unregister(Group)
 
