@@ -13,7 +13,17 @@ class ImageSerializer(serializers.ModelSerializer):
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = StadionReview
-        fields = ('user', 'comment', 'created_at')
+        fields = ('user', 'comment', 'infrastructure_rank', 'employee_rank', 'cover_rank', 'is_anonym', 'created_at')
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        request = self.context.get('request')
+        data['user'] = {
+            "id": instance.user.id,
+            "full_name": instance.user.get_full_name(),
+            "photo": request.build_absolute_uri(instance.user.photo)
+        }
+        return data
 
 
 class StadionUserSerializer(serializers.ModelSerializer):
@@ -53,7 +63,7 @@ class StadionDetailSerializer(serializers.ModelSerializer):
             for dic in data['images']:
                 dic['image'] = request.build_absolute_uri(dic['image'])
         reviews = instance.stadionreviews.all()
-        data['reviews'] =ReviewSerializer(reviews, many=True).data
+        data['reviews'] =ReviewSerializer(reviews, many=True, context={"request": request}).data
 
         data["rank"] = instance.all_rank
 
