@@ -23,27 +23,15 @@ class StadionListAPIView(ListAPIView):
     queryset = Stadion.objects.all()
     serializer_class = StadionSerializer
 
-    # def get_queryset(self):
-    #     tuman = self.request.query_params.get('tuman', None)
-    #     queryset = self.queryset.filter(is_active=True).select_related('tuman')
-    #
-    #     if tuman:
-    #         queryset = queryset.filter(tuman__id=tuman)
-    #
-    #     return queryset
-
-    from django.db.models import Avg
-
     def get_queryset(self):
         tuman = self.request.query_params.get('tuman', None)
 
-        queryset = self.queryset.filter(is_active=True).select_related('tuman', 'viloyat').prefetch_related(
-            'StadionStarts')
+        queryset = self.queryset.filter(is_active=True).select_related('tuman', 'viloyat')
 
         if tuman:
             queryset = queryset.filter(tuman__id=tuman)
 
-        return queryset.annotate(star_avg=Avg('StadionStarts__rank'))
+        return queryset
 
 
 class DetailStadionAPIView(RetrieveAPIView):
