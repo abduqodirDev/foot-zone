@@ -43,6 +43,17 @@ class Stadion(models.Model):
     def __str__(self):
         return str(self.title)
 
+    @property
+    def all_rank(self):
+        reviews = self.stadionreviews.all()
+        count = len(reviews)
+        if count == 0:
+            return 0
+        just = 0
+        for review in reviews:
+            just += review.get_rank
+        return round(just / count, 1)
+
     class Meta:
         verbose_name = 'Stadion'
         verbose_name_plural = 'Stadionlar'
@@ -134,6 +145,10 @@ class StadionReview(models.Model):
     comment = models.TextField()
     is_anonym = models.BooleanField(default=False)
     created_at = models.DateTimeField(default=timezone.now)
+
+    @property
+    def get_rank(self):
+        return (self.infrastructure_rank + self.employee_rank + self.cover_rank) / 3
 
     def __str__(self):
         return f"{self.user} reviewed for {self.stadion}"

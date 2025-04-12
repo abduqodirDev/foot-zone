@@ -1,7 +1,6 @@
 import calendar
 from datetime import timedelta, datetime
 
-from django.db.models import Avg
 from rest_framework import status
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView, \
     DestroyAPIView

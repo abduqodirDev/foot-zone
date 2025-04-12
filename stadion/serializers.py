@@ -29,28 +29,23 @@ class StadionSerializer(serializers.ModelSerializer):
         model = Stadion
         fields = ['id', 'title', 'price', 'address', 'photo', 'viloyat', 'tuman']
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["rank"] = instance.all_rank
+        return data
+
 
 class StadionDetailSerializer(serializers.ModelSerializer):
     user = StadionUserSerializer()
-    # star = serializers.SerializerMethodField("get_star")
     viloyat = serializers.StringRelatedField()
     tuman = serializers.StringRelatedField()
     class Meta:
         model = Stadion
         fields = "__all__"
 
-    # def get_star(self, obj):
-    #     count = 0
-    #     starts = obj.StadionStarts.all()
-    #     if len(starts) == 0:
-    #         return 0
-    #     for star in starts:
-    #         count += star.rank
-    #     return str(round(count / len(starts),1))
-
 
     def to_representation(self, instance):
-        data = super(StadionDetailSerializer, self).to_representation(instance)
+        data = super().to_representation(instance)
         images = instance.images.all()
         data['images'] = ImageSerializer(images, many=True).data
         request = self.context.get('request')
@@ -59,6 +54,8 @@ class StadionDetailSerializer(serializers.ModelSerializer):
                 dic['image'] = request.build_absolute_uri(dic['image'])
         reviews = instance.stadionreviews.all()
         data['reviews'] =ReviewSerializer(reviews, many=True).data
+
+        data["rank"] = instance.all_rank
 
         return data
 
