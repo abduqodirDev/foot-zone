@@ -149,3 +149,20 @@ class CreateStadionReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = StadionReview
         fields = ['stadion', 'infrastructure_rank', 'employee_rank', 'cover_rank', 'comment', 'is_anonym']
+
+
+class StadionReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StadionReview
+        fields = "__all__"
+
+    def to_representation(self, instance):
+        request = self.context.get("request")
+        data = super().to_representation(instance)
+        user = User.objects.get(id=instance.user.id)
+        data['user'] = {
+            "id": user.id,
+            "full_name": user.get_full_name(),
+            "photo": request.build_absolute_uri(user.photo.url)
+        }
+        return data

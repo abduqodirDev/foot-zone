@@ -5,7 +5,8 @@ from stadion.views import (
     StadionImageAPIView, StadionReviewAPIView, AdminStadionListAPIView, AdminStadionUpdateAPIView,
     AdminStadionDeleteAPIView, StadionStatistikaKunAPIView, StadionStatistikaOyAPIView, StadionStatistikaYilAPIView,
     StadionStatistikaUmumAPIView, StadionStatistikaKunlarAPIView, StadionEditPriceAPIView, StadionImagesAPIView,
-    StadionImagesDeleteAPIView, StadionImagesAllAPIView, StadionTimeActiveAPIView, CreateStadionReviewAPIView
+    StadionImagesDeleteAPIView, StadionImagesAllAPIView, StadionTimeActiveAPIView, CreateStadionReviewAPIView,
+    StadionReviewView
 )
 
 app_name = "stadion"
@@ -35,4 +36,5 @@ urlpatterns = [
     path('stadion-images/all-add/', StadionImagesAllAPIView.as_view(), name='stadion-images-all-add'),
 
     path('StadionReviewAdd/', CreateStadionReviewAPIView.as_view()),
+    path('StadionReviewAll/<int:id>/', StadionReviewView.as_view()),
 ]

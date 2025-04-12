@@ -746,3 +746,12 @@ class CreateStadionReviewAPIView(APIView):
         order.update(is_marked=True)
 
         return Response(serializer.data)
+
+
+class StadionReviewView(ListAPIView):
+    serializer_class = StadionReviewSerializer
+
+    def get_queryset(self):
+        id = self.kwargs.get('id')
+        stadion = Stadion.objects.get(id=id)
+        return StadionReview.objects.filter(stadion=stadion)
