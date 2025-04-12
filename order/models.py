@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 from stadion.models import Stadion
 from users.models import User
@@ -47,7 +48,8 @@ class BronStadion(models.Model):
     date = models.DateField(db_index=True)
     status = models.CharField(max_length=20, choices=STATUSCHOICE, default=KUTILMOQDA)
     is_active = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
+    is_marked = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
 
     objects = models.Manager()
     ActiveBronStadion = ActiveBronStadionManager()

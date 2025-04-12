@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import FileExtensionValidator
+from django.utils import timezone
 from django.utils.html import format_html
 from rest_framework.exceptions import ValidationError
 
@@ -127,11 +128,15 @@ class StadionReview(models.Model):
     stadion = models.ForeignKey("Stadion", on_delete=models.SET_NULL, blank=True, null=True, related_name="stadionreviews")
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
+    infrastructure_rank = models.IntegerField(default=0)
+    employee_rank = models.IntegerField(default=0)
+    cover_rank = models.IntegerField(default=0)
     comment = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
+    is_anonym = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return f"{self.user} writed for {self.stadion}"
+        return f"{self.user} reviewed for {self.stadion}"
 
     class Meta:
         verbose_name = "Stadion sharhi"

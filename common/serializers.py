@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from common.models import LikedStadion, Starts
+from common.models import LikedStadion
 from stadion.serializers import StadionSerializer
 
 
@@ -14,7 +14,7 @@ class LikedStadionPostSerializer(serializers.Serializer):
     stadion_id = serializers.IntegerField(required=True, min_value=0)
 
 
-class StartsPostSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Starts
-        fields = ('id', 'rank', 'stadion')
+# class StartsPostSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Starts
+#         fields = ('id', 'rank', 'stadion')

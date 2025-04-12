@@ -3,8 +3,8 @@ from rest_framework.generics import ListAPIView, CreateAPIView, DestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from common.models import LikedStadion, Starts
-from common.serializers import LikedStadionSerializer, LikedStadionPostSerializer, StartsPostSerializer
+from common.models import LikedStadion
+from common.serializers import LikedStadionSerializer, LikedStadionPostSerializer
 from stadion.models import Stadion
 
 
@@ -104,13 +104,13 @@ class LikedStadionView(ListAPIView):
     #         return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
 
-class StartsPostAPIView(CreateAPIView):
-    serializer_class = StartsPostSerializer
-    queryset = Starts.objects.all()
-    permission_classes = [IsAuthenticated]
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+# class StartsPostAPIView(CreateAPIView):
+#     serializer_class = StartsPostSerializer
+#     queryset = Starts.objects.all()
+#     permission_classes = [IsAuthenticated]
+#
+#     def perform_create(self, serializer):
+#         serializer.save(user=self.request.user)
 
 
 class DeleteLikedStadionView(DestroyAPIView):
