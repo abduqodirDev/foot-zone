@@ -15,7 +15,7 @@ from stadion.models import Stadion, StadionReview, Images, StadionPrice
 from stadion.serializers import StadionSerializer, StadionDetailSerializer, StadionAddSerializer, \
     AllStadionMapSerializer, StadionImageSerializer, StadionReviewSerializer, StadionAddReviewSerializer, \
     ImageSerializer, StadionEditPriceSerializer, StadionImagesSerializer, StadionImagesAddSerializer, \
-    StadionImageUploadSerializer, StadionTimeActiveSerializer
+    StadionImageUploadSerializer, StadionTimeActiveSerializer, CreateStadionReviewSerializer
 from users.permissions import StadionAdminPermission
 
 
@@ -736,3 +736,25 @@ class StadionImagesAllAPIView(APIView):
 
             return Response({"message": "Rasmlar muvaffaqiyatli qo‘shildi"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CreateStadionReviewAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = CreateStadionReviewSerializer
+    def post(self, request):
+        user = request.user
+        data = request.data
+        order_id = data.pop('order_id')
+        serializer = CreateStadionReviewSerializer(data=data)
+        if not serializer.is_valid():
+            return Response({
+                "success": False,
+                "status_code": 400,
+                "message": str(serializer.errors)
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer.save(user=user)
+        order = BronStadion.objects.filter(id=order_id)
+        order.update(is_marked=True)
+
+        return Response(serializer.data)

@@ -1,7 +1,7 @@
 from django.urls import path
 
 from order.views import BronStadionAPIView, MyBronStadion, MyStadionBronListAPIView, VerifyBronAPIView, \
-    StadionBronDiagrammaAPIView, MyStadionHistoryBronAPIView
+    StadionBronDiagrammaAPIView, MyStadionHistoryBronAPIView, ListIsMarkedAPIView
 
 app_name = "order"
 urlpatterns = [
@@ -12,4 +12,6 @@ urlpatterns = [
     path("my-stadion-history-bron/", MyStadionHistoryBronAPIView.as_view(), name="my-stadion-history-bron"),
     path("verify-stadion-bron/", VerifyBronAPIView.as_view(), name="verify-stadion-bron"),
     path("stadion-statistika/<int:id>/", StadionBronDiagrammaAPIView.as_view(), name="stadion-statistika"),
+
+    path("is-marked/", ListIsMarkedAPIView.as_view()),
 ]

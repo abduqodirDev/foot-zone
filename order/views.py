@@ -2,6 +2,7 @@ import datetime
 from datetime import date, timedelta
 
 from django.db.models import Q
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -271,3 +272,20 @@ class MyStadionHistoryBronAPIView(ListAPIView):
         for stadion in stadions:
             query += self.queryset.filter(stadion=stadion, date__lte=current_time - datetime.timedelta(days=1), user__isnull=False).order_by('-created_at')
         return query
+
+
+class ListIsMarkedAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        orders = BronStadion.objects.filter(user=user, status=TASDIQLANGAN, is_marked=False, date__lt=timezone.now().date())
+        data = [
+            {
+                "order_id": order.id,
+                "stadion_id": order.stadion.id,
+                "stadion": order.stadion.title,
+                "image": request.build_absolute_uri(order.stadion.photo.url)
+            } for order in orders
+        ]
+        return Response(data)
