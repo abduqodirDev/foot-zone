@@ -252,7 +252,7 @@ JAZZMIN_SETTINGS = {
 
     "show_sidebar": True,
 
-    "navigation_expanded": True,
+    "navigation_expanded": False,
 
     "hide_apps": [],
 
