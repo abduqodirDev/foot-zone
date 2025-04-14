@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from django.db import models
 from django.utils import timezone
 
@@ -49,6 +51,7 @@ class BronStadion(models.Model):
     status = models.CharField(max_length=20, choices=STATUSCHOICE, default=KUTILMOQDA)
     is_active = models.BooleanField(default=False)
     is_marked = models.BooleanField(default=False)
+    end_time = models.DateTimeField(blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
 
     objects = models.Manager()
@@ -56,6 +59,14 @@ class BronStadion(models.Model):
 
     def __str__(self):
         return f"{self.user} for {self.stadion}"
+
+    def save(self):
+        start_hour = int(self.time)
+        # start timeni hisoblab beradi
+        start_datetime = datetime.combine(self.date, datetime.min.time()) + timedelta(hours=start_hour)
+        # end time
+        self.end_time = start_datetime + timedelta(hours=1)
+        super().save()
 
     class Meta:
         verbose_name = "Bron stadion"

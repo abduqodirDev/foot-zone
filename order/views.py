@@ -279,11 +279,10 @@ class ListIsMarkedAPIView(APIView):
 
     def get(self, request):
         user = request.user
-        orders = BronStadion.objects.filter(user=user, status=TASDIQLANGAN, is_marked=False, date__lt=timezone.now().date())
+        orders = BronStadion.objects.filter(user=user, status=TASDIQLANGAN, is_marked=False, end_time__lte=timezone.now())
         data = [
             {
                 "order_id": order.id,
-                "stadion_id": order.stadion.id,
                 "stadion": order.stadion.title,
                 "image": request.build_absolute_uri(order.stadion.photo.url)
             } for order in orders

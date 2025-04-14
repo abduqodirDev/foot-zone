@@ -732,6 +732,24 @@ class CreateStadionReviewAPIView(APIView):
         user = request.user
         data = request.data
         order_id = data.pop('order_id')
+        order = BronStadion.objects.filter(id=order_id)
+        if not order:
+            return Response({
+                "success": False,
+                "status_code": 404,
+                "message": "Order not found"
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        if user != order.first().user or order.first().is_marked:
+            return Response({
+                "success": False,
+                "status_code": 400,
+                "message": "Order is not yours or your order was marked"
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        stadion_id = order.first().stadion.id
+        data['stadion'] = stadion_id
+
         serializer = CreateStadionReviewSerializer(data=data)
         if not serializer.is_valid():
             return Response({
@@ -741,16 +759,10 @@ class CreateStadionReviewAPIView(APIView):
             }, status=status.HTTP_400_BAD_REQUEST)
 
         serializer.save(user=user)
-        order = BronStadion.objects.filter(id=order_id)
         order.update(is_marked=True)
 
-        return Response(serializer.data)
-
-
-class StadionReviewView(ListAPIView):
-    serializer_class = StadionReviewSerializer
-
-    def get_queryset(self):
-        id = self.kwargs.get('id')
-        stadion = Stadion.objects.get(id=id)
-        return StadionReview.objects.filter(stadion=stadion)
+        return Response({
+            "success": True,
+            "status_code": 200,
+            "data": serializer.data
+        })
