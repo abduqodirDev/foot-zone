@@ -127,12 +127,12 @@ class BronStadionAPIView(APIView):
             }
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
-        except Exception as e:
-            context = {
-                "status": False,
-                "message": str(e)
-            }
-            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+        # except Exception as e:
+        #     context = {
+        #         "status": False,
+        #         "message": str(e)
+        #     }
+        #     return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
     def get_permissions(self):
         if self.request.method == 'GET':

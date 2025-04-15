@@ -60,13 +60,14 @@ class BronStadion(models.Model):
     def __str__(self):
         return f"{self.user} for {self.stadion}"
 
-    def save(self):
+    def save(self, *args, **kwars):
         start_hour = int(self.time)
         # start timeni hisoblab beradi
-        start_datetime = datetime.combine(self.date, datetime.min.time()) + timedelta(hours=start_hour)
+        date = datetime.strptime(self.date, "%Y-%m-%d").date()
+        start_datetime = datetime.combine(date, datetime.min.time()) + timedelta(hours=start_hour)
         # end time
         self.end_time = start_datetime + timedelta(hours=1)
-        super().save()
+        super(BronStadion, self).save(*args, **kwars)
 
     class Meta:
         verbose_name = "Bron stadion"
