@@ -63,8 +63,11 @@ class BronStadion(models.Model):
     def save(self, *args, **kwars):
         start_hour = int(self.time)
         # start timeni hisoblab beradi
-        date = datetime.strptime(self.date, "%Y-%m-%d").date()
-        start_datetime = datetime.combine(date, datetime.min.time()) + timedelta(hours=start_hour)
+        if type(self.date) == str:
+            datee = datetime.strptime(self.date, "%Y-%m-%d").date()
+            start_datetime = datetime.combine(datee, datetime.min.time()) + timedelta(hours=start_hour)
+        else:
+            start_datetime = datetime.combine(self.date, datetime.min.time()) + timedelta(hours=start_hour)
         # end time
         self.end_time = start_datetime + timedelta(hours=1)
         super(BronStadion, self).save(*args, **kwars)
